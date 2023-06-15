@@ -1,10 +1,7 @@
 import { View, StyleSheet } from 'react-native';
-import { Card, Text, useTheme } from 'react-native-paper';
-import React from 'react';
+import { Card, Text } from 'react-native-paper';
 
 export default function TaskSummary() {
-  const theme = useTheme();
-
   return (
     <View style={styles.summaryContainer}>
       <View>
@@ -20,13 +17,7 @@ export default function TaskSummary() {
           </Card.Content>
         </Card>
         <View style={styles.cardContainerChild}>
-          <Card
-            mode="contained"
-            theme={{
-              roundness: 16,
-              colors: { primary: theme.colors.background },
-            }}
-          >
+          <Card style={styles.summaryCard} mode="contained" theme={{ roundness: 16 }}>
             <Card.Content style={styles.cardContent}>
               <Text variant="displayMedium">16</Text>
               <Text variant="titleMedium">task in todo</Text>
