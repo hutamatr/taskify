@@ -20,12 +20,15 @@ export type RootStackParamList = {
   Categories: undefined;
   Account: undefined;
   Tasks: undefined;
-  CreateTask: undefined;
   HomeTabs: undefined;
+  CreateTask: undefined;
+  CreateCategories: undefined;
 };
 
 export type HomeNavigationProp = MaterialBottomTabNavigationProp<RootStackParamList, 'Home'>;
 
-export type CategoryNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Categories'>;
+export type TasksNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Tasks'>;
+
+export type CategoriesNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Categories'>;
 
 export type AccountNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Account'>;
