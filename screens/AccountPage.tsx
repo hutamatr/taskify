@@ -1,13 +1,17 @@
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-import Text from '../components/ui/Text';
+import AccountHeader from '../components/account-page/AccountHeader';
 
 export default function AccountPage() {
   return (
-    <View>
-      <Text variant="displaySmall" fontType="medium">
-        AccountPage
-      </Text>
+    <View style={styles.container}>
+      <AccountHeader />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
