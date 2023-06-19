@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import Header from '../components/home-page/HomeHeader';
 import TaskSummary from '../components/home-page/summary/TaskSummary';
 import Categories from '../components/home-page/categories/Categories';
-import DashboardTasks from '../components/home-page/tasks/Tasks';
+import Tasks from '../components/home-page/tasks/Tasks';
 import useHandleScroll from '../hooks/useHandleScroll';
 
 import { HomeNavigationProp } from '../types/types';
@@ -30,7 +30,7 @@ export default function HomePage() {
         <Header />
         <TaskSummary />
         <Categories />
-        <DashboardTasks />
+        <Tasks />
       </ScrollView>
       <AnimatedFAB
         icon="plus"

@@ -24,13 +24,6 @@ export type RootStackParamList = {
   HomeTabs: undefined;
 };
 
-// export type RootStackParamListTabs = {
-//   Home: undefined;
-//   CategoryStack: undefined;
-//   AccountStack: undefined;
-//   AllTasksStack: undefined;
-// };
-
 export type HomeNavigationProp = MaterialBottomTabNavigationProp<RootStackParamList, 'Home'>;
 
 export type CategoryNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Categories'>;
