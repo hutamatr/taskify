@@ -1,23 +1,21 @@
 import { View, StyleSheet } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
 
-import TasksHeader from '../components/tasks-page/TasksHeader';
-import TaskFilter from '../components/tasks-page/TasksFilter';
-import TaskList from '../components/tasks-page/TasksList';
+import CategoriesHeader from '../components/categories-page/CategoriesHeader';
+import CategoriesList from '../components/categories-page/CategoriesList';
 import useHandleScroll from '../hooks/useHandleScroll';
 
-export default function AllTaskPage() {
+export default function CategoriesPage() {
   const { handleScroll, showButton } = useHandleScroll();
 
   return (
     <View style={styles.container}>
-      <TasksHeader />
-      <TaskFilter />
-      <TaskList onScroll={handleScroll} />
+      <CategoriesHeader />
+      <CategoriesList onScroll={handleScroll} />
       <AnimatedFAB
         icon="plus"
         variant="tertiary"
-        label="Add Task"
+        label="Add Category"
         extended={showButton}
         onPress={() => console.log('Pressed')}
         visible={true}

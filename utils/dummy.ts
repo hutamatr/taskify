@@ -1,4 +1,4 @@
-import { ITask } from '../types/types';
+import { ITask, ICategories } from '../types/types';
 
 export const DUMMY_DATA: ITask[] = [
   {
@@ -56,5 +56,32 @@ export const DUMMY_DATA: ITask[] = [
     isCompleted: false,
     createdAt: '2021-08-20T12:00:00.000Z',
     updatedAt: '2021-08-20T12:00:00.000Z',
+  },
+];
+
+export const DUMMY_CATEGORIES: ICategories[] = [
+  {
+    id: '1',
+    name: 'Learn',
+  },
+  {
+    id: '2',
+    name: 'Work',
+  },
+  {
+    id: '3',
+    name: 'Play',
+  },
+  {
+    id: '4',
+    name: 'Sleep',
+  },
+  {
+    id: '5',
+    name: 'Eat',
+  },
+  {
+    id: '6',
+    name: 'Drink',
   },
 ];

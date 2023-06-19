@@ -1,10 +1,13 @@
-import { View, Text } from 'react-native';
-import React from 'react';
+import { View } from 'react-native';
+
+import Text from '../components/ui/Text';
 
 export default function AccountPage() {
   return (
     <View>
-      <Text>AccountPage</Text>
+      <Text variant="displaySmall" fontType="medium">
+        AccountPage
+      </Text>
     </View>
   );
 }
