@@ -6,7 +6,7 @@ import Header from '../ui/Header';
 export default function TasksHeader() {
   return (
     <Header style={styles.headerContainer}>
-      <View style={styles.textWelcomeContainer}>
+      <View style={styles.textTasksContainer}>
         <Text variant="headlineSmall" numberOfLines={1} lineBreakMode="tail" fontType="regular">
           Tasks
         </Text>
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     paddingTop: 16,
   },
-  textWelcomeContainer: {
+  textTasksContainer: {
     flex: 3,
   },
 });
