@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { Card, Text } from 'react-native-paper';
+import { Card } from 'react-native-paper';
+
+import Text from '../ui/Text';
 
 interface ITaskItemProps {
   description: string;
@@ -12,8 +14,12 @@ export default function TasksItem({ description, createdAt }: ITaskItemProps) {
   return (
     <Card style={styles.itemContainer} mode="contained" contentStyle={styles.itemContainer}>
       <Card.Content style={styles.cardContentContainer}>
-        <Text variant="titleLarge">{description}</Text>
-        <Text variant="bodyLarge">{new Date(createdAt).toLocaleString()}</Text>
+        <Text variant="titleLarge" fontType="medium">
+          {description}
+        </Text>
+        <Text variant="bodyLarge" fontType="regular">
+          {new Date(createdAt).toLocaleString()}
+        </Text>
       </Card.Content>
     </Card>
   );
