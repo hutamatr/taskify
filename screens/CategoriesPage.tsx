@@ -1,12 +1,21 @@
 import { View, StyleSheet } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 import CategoriesHeader from '../components/categories-page/CategoriesHeader';
 import CategoriesList from '../components/categories-page/CategoriesList';
 import useHandleScroll from '../hooks/useHandleScroll';
 
+import { CategoriesNavigationProp } from '../types/types';
+
 export default function CategoriesPage() {
   const { handleScroll, showButton } = useHandleScroll();
+
+  const navigation = useNavigation<CategoriesNavigationProp>();
+
+  const createNewCategoriesHandler = () => {
+    navigation.navigate('CreateCategories');
+  };
 
   return (
     <View style={styles.container}>
@@ -17,7 +26,7 @@ export default function CategoriesPage() {
         variant="tertiary"
         label="Add Category"
         extended={showButton}
-        onPress={() => console.log('Pressed')}
+        onPress={createNewCategoriesHandler}
         visible={true}
         animateFrom="right"
         iconMode="dynamic"
