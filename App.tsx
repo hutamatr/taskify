@@ -1,5 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { PaperProvider, MD3LightTheme as DefaultTheme } from 'react-native-paper';
 import {
   useFonts,
@@ -8,32 +8,29 @@ import {
   PlusJakartaSans_700Bold,
   PlusJakartaSans_600SemiBold,
 } from '@expo-google-fonts/plus-jakarta-sans';
-import { MaterialIcons } from '@expo/vector-icons';
 
-import HomePage from './screens/HomePage';
-import CategoryStack from './navigation/CategoryStack';
-import AccountStack from './navigation/AccountStack';
-import AllTaskStack from './navigation/AllTaskStack';
+import CreateTaskPage from './screens/CreateTaskPage';
+import HomeTabsNavigation from './navigation/HomeTabsNavigation';
 
-import { RootStackParamListTabs } from './types/types';
+import { RootStackParamList } from './types/types';
 
 const customFonts = {
   'plus-jakarta-sans-regular': PlusJakartaSans_400Regular,
   'plus-jakarta-sans-medium': PlusJakartaSans_500Medium,
   'plus-jakarta-sans-bold': PlusJakartaSans_700Bold,
-  'plus-jakarta-sans-semi-bold': PlusJakartaSans_600SemiBold,
+  'plus-jakarta-sans-semibold': PlusJakartaSans_600SemiBold,
 };
 
 const theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: 'tomato',
-    secondary: 'yellow',
+    primary: 'violet',
+    secondary: 'tomato',
   },
 };
 
-const Tab = createMaterialBottomTabNavigator<RootStackParamListTabs>();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   const [fontsLoaded] = useFonts(customFonts);
@@ -44,42 +41,21 @@ export default function App() {
   return (
     <PaperProvider theme={theme}>
       <NavigationContainer>
-        <Tab.Navigator>
-          <Tab.Screen
-            name="Home"
-            component={HomePage}
+        <Stack.Navigator>
+          <Stack.Screen
+            name="HomeTabs"
+            component={HomeTabsNavigation}
             options={{
-              title: 'Home',
-              tabBarIcon: ({ color }) => <MaterialIcons name="home" size={24} color={color} />,
+              title: '',
+              headerShadowVisible: false,
+              headerStyle: { backgroundColor: theme.colors.inversePrimary },
+              headerShown: false,
+              statusBarStyle: 'dark',
+              statusBarColor: theme.colors.inversePrimary,
             }}
           />
-          <Tab.Screen
-            name="AllTasksStack"
-            component={AllTaskStack}
-            options={{
-              title: 'Tasks',
-              tabBarIcon: ({ color }) => <MaterialIcons name="add-task" size={24} color={color} />,
-            }}
-          />
-          <Tab.Screen
-            name="CategoryStack"
-            component={CategoryStack}
-            options={{
-              title: 'Categories',
-              tabBarIcon: ({ color }) => <MaterialIcons name="category" size={24} color={color} />,
-            }}
-          />
-          <Tab.Screen
-            name="AccountStack"
-            component={AccountStack}
-            options={{
-              title: 'Account',
-              tabBarIcon: ({ color }) => (
-                <MaterialIcons name="account-circle" size={24} color={color} />
-              ),
-            }}
-          />
-        </Tab.Navigator>
+          <Stack.Screen name="CreateTask" component={CreateTaskPage} />
+        </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
   );
