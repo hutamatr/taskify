@@ -3,7 +3,7 @@ import { AnimatedFAB } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 import Header from '../components/home-page/HomeHeader';
-import TaskSummary from '../components/home-page/summary/TaskSummary';
+import TasksSummary from '../components/home-page/summary/TasksSummary';
 import Categories from '../components/home-page/categories/Categories';
 import Tasks from '../components/home-page/tasks/Tasks';
 import useHandleScroll from '../hooks/useHandleScroll';
@@ -28,7 +28,7 @@ export default function HomePage() {
         showsVerticalScrollIndicator={false}
       >
         <Header />
-        <TaskSummary />
+        <TasksSummary />
         <Categories />
         <Tasks />
       </ScrollView>
