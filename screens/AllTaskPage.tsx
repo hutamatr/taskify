@@ -1,13 +1,21 @@
 import { View, StyleSheet } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 import TasksHeader from '../components/tasks-page/TasksHeader';
 import TaskFilter from '../components/tasks-page/TasksFilter';
 import TaskList from '../components/tasks-page/TasksList';
 import useHandleScroll from '../hooks/useHandleScroll';
 
+import { TasksNavigationProp } from '../types/types';
+
 export default function AllTaskPage() {
   const { handleScroll, showButton } = useHandleScroll();
+  const navigation = useNavigation<TasksNavigationProp>();
+
+  const createNewTaskHandler = () => {
+    navigation.navigate('CreateTask');
+  };
 
   return (
     <View style={styles.container}>
@@ -19,7 +27,7 @@ export default function AllTaskPage() {
         variant="tertiary"
         label="Add Task"
         extended={showButton}
-        onPress={() => console.log('Pressed')}
+        onPress={createNewTaskHandler}
         visible={true}
         animateFrom="right"
         iconMode="dynamic"
