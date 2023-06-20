@@ -1,4 +1,4 @@
-import { View, StyleSheet, ViewProps, StyleProp, ViewStyle } from 'react-native';
+import { type StyleProp, StyleSheet, View, type ViewProps, type ViewStyle } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 interface IHeaderProps extends ViewProps {
@@ -26,8 +26,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomRightRadius: 30,
     borderBottomLeftRadius: 30,
-    paddingHorizontal: 16,
+    paddingHorizontal: 24,
     paddingBottom: 24,
-    paddingTop: 150,
   },
 });

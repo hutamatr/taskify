@@ -1,13 +1,12 @@
-import { View, StyleSheet } from 'react-native';
-import { AnimatedFAB } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, View } from 'react-native';
+import { AnimatedFAB } from 'react-native-paper';
 
-import TasksHeader from '../components/tasks-page/TasksHeader';
 import TaskFilter from '../components/tasks-page/TasksFilter';
+import TasksHeader from '../components/tasks-page/TasksHeader';
 import TaskList from '../components/tasks-page/TasksList';
 import useHandleScroll from '../hooks/useHandleScroll';
-
-import { TasksNavigationProp } from '../types/types';
+import { type TasksNavigationProp } from '../types/types';
 
 export default function AllTaskPage() {
   const { handleScroll, showButton } = useHandleScroll();

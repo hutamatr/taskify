@@ -1,4 +1,9 @@
-import { FlatList, NativeScrollEvent, NativeSyntheticEvent, StyleSheet } from 'react-native';
+import {
+  FlatList,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+  StyleSheet,
+} from 'react-native';
 
 import CategoriesItem from './CategoriesItem';
 import { DUMMY_CATEGORIES } from '../../utils/dummy';

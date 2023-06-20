@@ -1,10 +1,9 @@
-import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import { type StyleProp, StyleSheet, type ViewStyle } from 'react-native';
 import { Card } from 'react-native-paper';
-import { VariantProp } from 'react-native-paper/lib/typescript/src/components/Typography/types';
+import { type VariantProp } from 'react-native-paper/lib/typescript/src/components/Typography/types';
 
 import Text from '../ui/Text';
-
-import { ICategories } from '../../types/types';
+import { type ICategories } from '../../types/types';
 
 interface ICategoriesItemProps extends ICategories {
   style?: StyleProp<ViewStyle>;

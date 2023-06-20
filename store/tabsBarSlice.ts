@@ -1,4 +1,4 @@
-import { StateCreator } from 'zustand';
+import { type StateCreator } from 'zustand';
 
 export interface ITabsBar {
   isTabsBarShow: boolean;
@@ -7,5 +7,7 @@ export interface ITabsBar {
 
 export const tabsBarSlice: StateCreator<ITabsBar, [], [], ITabsBar> = (set) => ({
   isTabsBarShow: true,
-  onTabsBarShowHandler: (isExtended) => set({ isTabsBarShow: isExtended }),
+  onTabsBarShowHandler: (isExtended) => {
+    set({ isTabsBarShow: isExtended });
+  },
 });

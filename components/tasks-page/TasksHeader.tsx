@@ -1,7 +1,7 @@
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import Text from '../ui/Text';
 import Header from '../ui/Header';
+import Text from '../ui/Text';
 
 export default function TasksHeader() {
   return (

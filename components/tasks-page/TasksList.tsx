@@ -1,7 +1,13 @@
-import { View, FlatList, StyleSheet, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
+import {
+  FlatList,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+  StyleSheet,
+  View,
+} from 'react-native';
 
-import { DUMMY_DATA } from '../../utils/dummy';
 import TaskItem from './TasksItem';
+import { DUMMY_DATA } from '../../utils/dummy';
 
 interface ITaskListProps {
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;

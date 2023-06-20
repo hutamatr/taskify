@@ -1,22 +1,21 @@
-import 'expo-dev-client';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { PaperProvider, MD3LightTheme as DefaultTheme } from 'react-native-paper';
 import {
-  useFonts,
   PlusJakartaSans_400Regular,
   PlusJakartaSans_500Medium,
-  PlusJakartaSans_700Bold,
   PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
+  useFonts,
 } from '@expo-google-fonts/plus-jakarta-sans';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
+import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
+import 'expo-dev-client';
 
-import CreateTaskPage from './screens/CreateTaskPage';
-import CreateCategoriesPage from './screens/CreateCategoriesPage';
-import HomeTabsNavigation from './navigation/HomeTabsNavigation';
 import Text from './components/ui/Text';
-
-import { RootStackParamList } from './types/types';
+import HomeTabsNavigation from './navigation/HomeTabsNavigation';
+import CreateCategoriesPage from './screens/CreateCategoriesPage';
+import CreateTaskPage from './screens/CreateTaskPage';
+import { type RootStackParamList } from './types/types';
 
 const customFonts = {
   'plus-jakarta-sans-regular': PlusJakartaSans_400Regular,
@@ -42,6 +41,7 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
+
   return (
     <>
       <StatusBar style="auto" animated hideTransitionAnimation="fade" />

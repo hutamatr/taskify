@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback } from 'react';
-import { NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 
 import { useStore } from '../store/useStore';
 
@@ -27,6 +27,7 @@ const useHandleScroll = () => {
       //     property: LayoutAnimation.Properties.opacity,
       //   },
       // };
+
       // Check if the user is scrolling up or down by confronting the new scroll position with your own one
       const currentOffset = event.nativeEvent.contentOffset.y;
       const direction = currentOffset > 0 && currentOffset > scrollOffset.current ? 'down' : 'up';

@@ -1,8 +1,8 @@
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
-import Text from '../../ui/Text';
 import SummaryCard from './SummaryCard';
+import Text from '../../ui/Text';
 
 export default function TasksSummary() {
   const theme = useTheme();

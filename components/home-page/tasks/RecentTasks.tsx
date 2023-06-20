@@ -1,8 +1,8 @@
 import { StyleSheet, View } from 'react-native';
 
-import { DUMMY_DATA } from '../../../utils/dummy';
-import Text from '../../ui/Text';
 import TaskItem from '../../tasks-page/TasksItem';
+import Text from '../../ui/Text';
+import { DUMMY_DATA } from '../../../utils/dummy';
 
 export default function RecentTasks() {
   return (

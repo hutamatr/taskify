@@ -1,4 +1,4 @@
-import { Text as DefaultText, TextProps } from 'react-native-paper';
+import { Text as DefaultText, type TextProps } from 'react-native-paper';
 
 interface ITextProps extends TextProps<unknown> {
   children: string;

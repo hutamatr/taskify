@@ -1,14 +1,13 @@
-import { View, ScrollView, StyleSheet } from 'react-native';
-import { AnimatedFAB } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { AnimatedFAB } from 'react-native-paper';
 
+import Categories from '../components/home-page/categories/Categories';
 import Header from '../components/home-page/HomeHeader';
 import TasksSummary from '../components/home-page/summary/TasksSummary';
-import Categories from '../components/home-page/categories/Categories';
 import Tasks from '../components/home-page/tasks/Tasks';
 import useHandleScroll from '../hooks/useHandleScroll';
-
-import { HomeNavigationProp } from '../types/types';
+import { type HomeNavigationProp } from '../types/types';
 
 export default function HomePage() {
   const { handleScroll, showButton } = useHandleScroll();
@@ -22,7 +21,6 @@ export default function HomePage() {
   return (
     <View style={styles.container}>
       <ScrollView
-        style={styles.container}
         onScroll={handleScroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}

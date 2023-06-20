@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
-import Text from '../../ui/Text';
 import CategoriesItem from '../../categories-page/CategoriesItem';
+import Text from '../../ui/Text';
 import { DUMMY_CATEGORIES } from '../../../utils/dummy';
 
 export default function RecentCategories() {

@@ -1,14 +1,13 @@
-import { View, StyleSheet } from 'react-native';
-import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, View } from 'react-native';
+import { Button } from 'react-native-paper';
 
-import Text from '../../ui/Text';
 import RecentCategories from './RecentCategories';
-
-import { CategoryNavigationProp } from '../../../types/types';
+import Text from '../../ui/Text';
+import { type CategoriesNavigationProp } from '../../../types/types';
 
 export default function Categories() {
-  const navigation = useNavigation<CategoryNavigationProp>();
+  const navigation = useNavigation<CategoriesNavigationProp>();
 
   const showAllCategoriesHandler = () => {
     navigation.navigate('Categories');

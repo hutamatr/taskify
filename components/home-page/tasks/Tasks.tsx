@@ -1,11 +1,10 @@
-import { View, StyleSheet } from 'react-native';
-import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, View } from 'react-native';
+import { Button } from 'react-native-paper';
 
-import Text from '../../ui/Text';
 import RecentTasks from './RecentTasks';
-
-import { HomeNavigationProp } from '../../../types/types';
+import Text from '../../ui/Text';
+import { type HomeNavigationProp } from '../../../types/types';
 
 export default function Tasks() {
   const navigation = useNavigation<HomeNavigationProp>();

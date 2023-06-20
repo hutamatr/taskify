@@ -1,8 +1,7 @@
-import { View, StyleSheet } from 'react-native';
-
-import Text from '../ui/Text';
+import { StyleSheet, View } from 'react-native';
 
 import Header from '../ui/Header';
+import Text from '../ui/Text';
 
 export default function CategoriesHeader() {
   return (
