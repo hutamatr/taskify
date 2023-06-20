@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { Card } from 'react-native-paper';
 
 import Text from '../../ui/Text';
@@ -9,7 +9,7 @@ export default function SummaryCard() {
       <Card
         mode="contained"
         style={styles.summaryCard}
-        theme={{ roundness: 16 }}
+        theme={{ roundness: 8 }}
         contentStyle={{
           flexDirection: 'row',
           justifyContent: 'space-between',
@@ -29,7 +29,7 @@ export default function SummaryCard() {
         </View>
       </Card>
       <View style={styles.cardContainerChild}>
-        <Card style={styles.summaryCard} mode="contained" theme={{ roundness: 16 }}>
+        <Card style={styles.summaryCard} mode="contained" theme={{ roundness: 8 }}>
           <Card.Content style={styles.cardContent}>
             <Text variant="displayMedium" fontType="regular">
               16
@@ -39,7 +39,7 @@ export default function SummaryCard() {
             </Text>
           </Card.Content>
         </Card>
-        <Card mode="contained" style={styles.summaryCard} theme={{ roundness: 16 }}>
+        <Card mode="contained" style={styles.summaryCard} theme={{ roundness: 8 }}>
           <Card.Content style={styles.cardContent}>
             <Text variant="displayMedium" fontType="regular">
               20
@@ -56,7 +56,7 @@ export default function SummaryCard() {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    rowGap: 4,
+    rowGap: 8,
   },
   summaryCard: {
     flex: 1,
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
   cardContainerChild: {
     flexDirection: 'row',
-    columnGap: 4,
+    columnGap: 8,
   },
   image: {
     width: '100%',
