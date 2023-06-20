@@ -1,39 +1,39 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import { PaperProvider, MD3LightTheme as DefaultTheme } from 'react-native-paper';
 import {
-  useFonts,
   PlusJakartaSans_400Regular,
   PlusJakartaSans_500Medium,
-  PlusJakartaSans_700Bold,
   PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
+  useFonts,
 } from '@expo-google-fonts/plus-jakarta-sans';
-import { MaterialIcons } from '@expo/vector-icons';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StatusBar } from 'expo-status-bar';
+import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
+import 'expo-dev-client';
 
-import HomePage from './screens/HomePage';
-import CategoryStack from './navigation/CategoryStack';
-import AccountStack from './navigation/AccountStack';
-import AllTaskStack from './navigation/AllTaskStack';
-
-import { RootStackParamListTabs } from './types/types';
+import Text from './components/ui/Text';
+import HomeTabsNavigation from './navigation/HomeTabsNavigation';
+import CreateCategoriesPage from './screens/CreateCategoriesPage';
+import CreateTaskPage from './screens/CreateTaskPage';
+import { type RootStackParamList } from './types/types';
 
 const customFonts = {
   'plus-jakarta-sans-regular': PlusJakartaSans_400Regular,
   'plus-jakarta-sans-medium': PlusJakartaSans_500Medium,
   'plus-jakarta-sans-bold': PlusJakartaSans_700Bold,
-  'plus-jakarta-sans-semi-bold': PlusJakartaSans_600SemiBold,
+  'plus-jakarta-sans-semibold': PlusJakartaSans_600SemiBold,
 };
 
 const theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: 'tomato',
-    secondary: 'yellow',
+    primary: 'violet',
+    secondary: 'tomato',
   },
 };
 
-const Tab = createMaterialBottomTabNavigator<RootStackParamListTabs>();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   const [fontsLoaded] = useFonts(customFonts);
@@ -41,46 +41,60 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
+
   return (
-    <PaperProvider theme={theme}>
-      <NavigationContainer>
-        <Tab.Navigator>
-          <Tab.Screen
-            name="Home"
-            component={HomePage}
-            options={{
-              title: 'Home',
-              tabBarIcon: ({ color }) => <MaterialIcons name="home" size={24} color={color} />,
-            }}
-          />
-          <Tab.Screen
-            name="AllTasksStack"
-            component={AllTaskStack}
-            options={{
-              title: 'Tasks',
-              tabBarIcon: ({ color }) => <MaterialIcons name="add-task" size={24} color={color} />,
-            }}
-          />
-          <Tab.Screen
-            name="CategoryStack"
-            component={CategoryStack}
-            options={{
-              title: 'Categories',
-              tabBarIcon: ({ color }) => <MaterialIcons name="category" size={24} color={color} />,
-            }}
-          />
-          <Tab.Screen
-            name="AccountStack"
-            component={AccountStack}
-            options={{
-              title: 'Account',
-              tabBarIcon: ({ color }) => (
-                <MaterialIcons name="account-circle" size={24} color={color} />
-              ),
-            }}
-          />
-        </Tab.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+    <>
+      <StatusBar style="auto" animated hideTransitionAnimation="fade" />
+      <PaperProvider theme={theme}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="HomeTabs"
+              component={HomeTabsNavigation}
+              options={{
+                title: '',
+                headerShadowVisible: false,
+                headerStyle: { backgroundColor: theme.colors.inversePrimary },
+                headerShown: false,
+                statusBarStyle: 'dark',
+                statusBarColor: theme.colors.inversePrimary,
+              }}
+            />
+            <Stack.Screen
+              name="CreateTask"
+              component={CreateTaskPage}
+              options={{
+                title: 'Create Task',
+                headerShadowVisible: false,
+                headerTitle: () => (
+                  <Text fontType="regular" variant="headlineSmall">
+                    Create Task
+                  </Text>
+                ),
+                headerStyle: { backgroundColor: theme.colors.inversePrimary },
+                statusBarStyle: 'dark',
+                statusBarColor: theme.colors.inversePrimary,
+              }}
+            />
+            <Stack.Screen
+              name="CreateCategories"
+              component={CreateCategoriesPage}
+              options={{
+                title: 'Create Categories',
+                headerShadowVisible: false,
+                headerTitle: () => (
+                  <Text fontType="regular" variant="headlineSmall">
+                    Create Categories
+                  </Text>
+                ),
+                headerStyle: { backgroundColor: theme.colors.inversePrimary },
+                statusBarStyle: 'dark',
+                statusBarColor: theme.colors.inversePrimary,
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
+    </>
   );
 }

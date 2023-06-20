@@ -2,31 +2,30 @@ import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, View } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
 
-import TaskFilter from '../components/tasks-page/TasksFilter';
-import TasksHeader from '../components/tasks-page/TasksHeader';
-import TaskList from '../components/tasks-page/TasksList';
+import CategoriesHeader from '../components/categories-page/CategoriesHeader';
+import CategoriesList from '../components/categories-page/CategoriesList';
 import useHandleScroll from '../hooks/useHandleScroll';
-import { type TasksNavigationProp } from '../types/types';
+import { type CategoriesNavigationProp } from '../types/types';
 
-export default function AllTaskPage() {
+export default function CategoriesPage() {
   const { handleScroll, showButton } = useHandleScroll();
-  const navigation = useNavigation<TasksNavigationProp>();
 
-  const createNewTaskHandler = () => {
-    navigation.navigate('CreateTask');
+  const navigation = useNavigation<CategoriesNavigationProp>();
+
+  const createNewCategoriesHandler = () => {
+    navigation.navigate('CreateCategories');
   };
 
   return (
     <View style={styles.container}>
-      <TasksHeader />
-      <TaskFilter />
-      <TaskList onScroll={handleScroll} />
+      <CategoriesHeader />
+      <CategoriesList onScroll={handleScroll} />
       <AnimatedFAB
         icon="plus"
         variant="tertiary"
-        label="Add Task"
+        label="Add Category"
         extended={showButton}
-        onPress={createNewTaskHandler}
+        onPress={createNewCategoriesHandler}
         visible={true}
         animateFrom="right"
         iconMode="dynamic"

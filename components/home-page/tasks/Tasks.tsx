@@ -1,33 +1,35 @@
-import { View, StyleSheet } from 'react-native';
-import { Text, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, View } from 'react-native';
+import { Button } from 'react-native-paper';
 
-import DashboardTasksList from './DashboardTasksList';
+import RecentTasks from './RecentTasks';
+import Text from '../../ui/Text';
+import { type HomeNavigationProp } from '../../../types/types';
 
-import { HomeNavigationProp } from '../../../types/types';
-
-export default function DashboardTasks() {
+export default function Tasks() {
   const navigation = useNavigation<HomeNavigationProp>();
 
   const showAllTaskHandler = () => {
-    navigation.navigate('AllTasksStack');
+    navigation.navigate('Tasks');
   };
 
   return (
-    <View style={styles.dashboardTasksContainer}>
+    <View style={styles.TasksContainer}>
       <View style={styles.titleContainer}>
-        <Text variant="headlineSmall">Recent Task</Text>
+        <Text variant="headlineSmall" fontType="regular">
+          Recent Task
+        </Text>
         <Button mode="text" onPress={showAllTaskHandler}>
           See all
         </Button>
       </View>
-      <DashboardTasksList />
+      <RecentTasks />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  dashboardTasksContainer: {
+  TasksContainer: {
     marginHorizontal: 16,
   },
   titleContainer: {
