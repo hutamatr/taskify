@@ -1,6 +1,7 @@
-import { View, StyleSheet } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Button, TextInput } from 'react-native-paper';
 
+import Text from '../components/ui/Text';
 import useInputState from '../hooks/useInputState';
 
 export default function CreateTaskPage() {
@@ -23,7 +24,11 @@ export default function CreateTaskPage() {
         onChangeText={onChangeInputHandler.bind(null, 'description')}
         value={input.description}
       />
-      <Button mode="contained">Add Task</Button>
+      <Button mode="contained" style={styles.button}>
+        <Text fontType="semibold" variant="titleMedium">
+          Add Task
+        </Text>
+      </Button>
     </View>
   );
 }
@@ -34,5 +39,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginVertical: 24,
     rowGap: 24,
+  },
+  button: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
   },
 });
