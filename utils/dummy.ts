@@ -1,4 +1,4 @@
-import { ITask, ICategories } from '../types/types';
+import { type ICategories, type ITask } from '../types/types';
 
 export const DUMMY_DATA: ITask[] = [
   {
