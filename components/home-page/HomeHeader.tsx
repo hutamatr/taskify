@@ -1,41 +1,51 @@
-import { View, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { Avatar } from 'react-native-paper';
 
-import Text from '../ui/Text';
 import Header from '../ui/Header';
+import Text from '../ui/Text';
+import { getLabelByUsername } from '../../utils/usernameLabel';
+
+const username = 'hutama trirahmanto';
 
 export default function HomeHeader() {
+  const [label] = useState(getLabelByUsername(username));
+
   return (
-    <Header>
+    <Header style={styles.headerContainer}>
       <View style={styles.textWelcomeContainer}>
         <Text variant="labelLarge" fontType="medium">
           Hello,
         </Text>
         <Text variant="headlineMedium" numberOfLines={1} lineBreakMode="tail" fontType="medium">
-          Hutama Trirahmanto
+          {username}
         </Text>
       </View>
-      <Avatar.Image source={{ uri: 'https://picsum.photos/200' }} size={45} />
+      <View style={styles.avatarContainer}>
+        <Avatar.Text
+          size={50}
+          label={
+            label.firstLetterAfterSpace
+              ? label.firstLetter + label.firstLetterAfterSpace
+              : label.firstLetter
+          }
+        />
+      </View>
     </Header>
   );
 }
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    paddingTop: 100,
+    flexDirection: 'column-reverse',
+  },
   textWelcomeContainer: {
-    flex: 3,
+    alignItems: 'flex-start',
+    width: '100%',
   },
-  iconsContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    columnGap: 16,
-    justifyContent: 'space-around',
-  },
-  textWelcome: {
-    fontSize: 18,
-    color: 'black',
-  },
-  textWelcomeName: {
-    fontSize: 22,
-    color: 'black',
+  avatarContainer: {
+    alignItems: 'flex-end',
+    width: '100%',
   },
 });
