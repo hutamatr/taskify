@@ -4,10 +4,17 @@
   "main": "node_modules/expo/AppEntry.js",
   "private": true,
   "scripts": {
+    "dev-start": "expo start --dev-client",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix && yarn format",
+    "lint:strict": "eslint --max-warnings=0 .",
+    "typechecks": "tsc --noEmit --incremental false",
+    "format": "prettier -w '**/*.{ts,tsx,js,jsx,css,scss}'",
+    "format:check": "prettier -c ."
   },
   "dependencies": {
     "@expo-google-fonts/plus-jakarta-sans": "^0.2.3",
@@ -30,15 +37,18 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~18.0.14",
-    "@typescript-eslint/eslint-plugin": "^5.50.0",
-    "eslint": "^8.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
+    "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-standard-with-typescript": "^35.0.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-native": "^4.0.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
     "prettier": "^2.8.8",
     "typescript": "^4.9.4"
   }
