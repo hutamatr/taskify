@@ -2,12 +2,14 @@ import { StyleSheet, View } from 'react-native';
 
 import TaskItem from '../../tasks-page/TasksItem';
 import Text from '../../ui/Text';
-import { DUMMY_DATA } from '../../../utils/dummy';
+import { useStore } from '../../../store/useStore';
 
 export default function RecentTasks() {
+  const tasks = useStore((state) => state.tasks);
+
   return (
     <View style={styles.listContainer}>
-      {DUMMY_DATA.length === 0 ? (
+      {tasks?.length === 0 ? (
         <View style={styles.taskEmptyContainer}>
           <Text variant="headlineSmall" fontType="medium">
             No Task
@@ -15,13 +17,14 @@ export default function RecentTasks() {
         </View>
       ) : (
         <>
-          {DUMMY_DATA.slice(0, 5).map((item) => {
+          {tasks?.slice(0, 5).map((item) => {
             return (
               <TaskItem
                 key={item.id}
+                title={item.title}
+                date={item.date}
                 description={item.description}
                 isCompleted={item.isCompleted}
-                createdAt={item.createdAt}
               />
             );
           })}
