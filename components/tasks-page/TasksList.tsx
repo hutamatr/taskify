@@ -7,25 +7,33 @@ import {
 } from 'react-native';
 
 import TaskItem from './TasksItem';
-import { DUMMY_DATA } from '../../utils/dummy';
+import Text from '../ui/Text';
+import { useStore } from '../../store/useStore';
 
 interface ITaskListProps {
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 }
 
 export default function TasksList({ onScroll }: ITaskListProps) {
+  const tasks = useStore((state) => state.tasks);
+  const isLoading = useStore((state) => state.isLoading);
+
+  console.log({ tasks });
+
   return (
     <View style={styles.listContainer}>
-      <FlatList
-        data={DUMMY_DATA}
-        renderItem={({ item }) => (
-          <TaskItem description={item.description} createdAt={item.createdAt} />
-        )}
-        keyExtractor={(item) => item.id as string}
-        onScroll={onScroll}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-      />
+      {isLoading ? (
+        <Text fontType="medium">Loading...</Text>
+      ) : (
+        <FlatList
+          data={tasks}
+          renderItem={({ item }) => <TaskItem {...item} />}
+          keyExtractor={(item) => item.id as string}
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </View>
   );
 }
