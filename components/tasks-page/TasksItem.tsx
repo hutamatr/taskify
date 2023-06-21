@@ -5,20 +5,24 @@ import { Card } from 'react-native-paper';
 import Text from '../ui/Text';
 
 interface ITaskItemProps {
+  title: string;
   description: string;
-  createdAt: string;
+  date: string;
   isCompleted?: boolean;
 }
 
-export default function TasksItem({ description, createdAt }: ITaskItemProps) {
+export default function TasksItem({ title, description, date }: ITaskItemProps) {
   return (
     <Card style={styles.itemContainer} mode="contained" contentStyle={styles.itemContainer}>
       <Card.Content style={styles.cardContentContainer}>
         <Text variant="titleLarge" fontType="medium">
+          {title}
+        </Text>
+        <Text variant="bodySmall" fontType="regular">
           {description}
         </Text>
         <Text variant="bodyLarge" fontType="regular">
-          {new Date(createdAt).toLocaleString()}
+          {new Date(date).toLocaleString()}
         </Text>
       </Card.Content>
     </Card>
