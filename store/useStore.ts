@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
-import { type ITabsBar, tabsBarSlice } from './tabsBarSlice';
+import { type ITaskSlice, tasksSlice } from './tasksSlice';
 
-export const useStore = create<ITabsBar>((...a) => ({
-  ...tabsBarSlice(...a),
+export const useStore = create<ITaskSlice>((...a) => ({
+  ...tasksSlice(...a),
 }));
