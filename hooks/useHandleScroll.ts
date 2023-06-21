@@ -1,12 +1,8 @@
 import { useCallback, useRef, useState } from 'react';
 import { type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 
-import { useStore } from '../store/useStore';
-
 const useHandleScroll = () => {
   const [showButton, setShowButton] = useState(true);
-
-  const onTabsBarShowHandler = useStore((state) => state.onTabsBarShowHandler);
 
   const scrollOffset = useRef(0);
 
@@ -34,7 +30,6 @@ const useHandleScroll = () => {
       // If the user is scrolling down (and the action-button is still visible) hide it
       const isActionButtonVisible = direction === 'up';
       if (isActionButtonVisible !== showButton) {
-        onTabsBarShowHandler(isActionButtonVisible);
         setShowButton(isActionButtonVisible);
         // LayoutAnimation.configureNext(CustomLayoutLinear);
       }
