@@ -1,7 +1,7 @@
 import { Text as DefaultText, type TextProps } from 'react-native-paper';
 
 interface ITextProps extends TextProps<unknown> {
-  children: string;
+  children: string | React.ReactNode;
   fontType: 'regular' | 'medium' | 'bold' | 'semibold';
 }
 
