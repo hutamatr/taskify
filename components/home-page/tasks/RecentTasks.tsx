@@ -1,23 +1,32 @@
 import { StyleSheet, View } from 'react-native';
+import { shallow } from 'zustand/shallow';
 
 import TaskItem from '../../tasks-page/TasksItem';
+import Loading from '../../ui/Loading';
 import Text from '../../ui/Text';
 import { useStore } from '../../../store/useStore';
 
 export default function RecentTasks() {
-  const tasks = useStore((state) => state.tasks);
+  const { tasks, isLoading, error } = useStore(
+    (state) => ({
+      tasks: state.tasks,
+      isLoading: state.isLoading,
+      error: state.error,
+    }),
+    shallow
+  );
 
   return (
     <View style={styles.listContainer}>
-      {tasks?.length === 0 ? (
-        <View style={styles.taskEmptyContainer}>
-          <Text variant="headlineSmall" fontType="medium">
-            No Task
-          </Text>
-        </View>
-      ) : (
+      {isLoading && <Loading size="large" />}
+      {error?.isError && (
+        <Text fontType="medium" style={styles.error} variant="headlineSmall">
+          {error.errorMessage}
+        </Text>
+      )}
+      {!isLoading && !error.isError && (
         <>
-          {tasks?.slice(0, 5).map((item) => {
+          {tasks.slice(0, 3).map((item) => {
             return (
               <TaskItem
                 key={item.id}
@@ -49,5 +58,14 @@ const styles = StyleSheet.create({
   taskEmptyText: {
     fontSize: 20,
     textAlign: 'center',
+  },
+  loading: {
+    textAlign: 'center',
+    margin: 24,
+  },
+  error: {
+    textAlign: 'center',
+    margin: 24,
+    color: 'red',
   },
 });
