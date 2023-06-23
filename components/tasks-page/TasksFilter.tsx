@@ -1,16 +1,34 @@
-import { StyleSheet, View } from 'react-native';
+import { GestureResponderEvent, StyleSheet, View } from 'react-native';
 import { Button, useTheme } from 'react-native-paper';
 
-export default function TasksFilter() {
+interface ITasksFilterProps {
+  onPressInprogress: (e?: GestureResponderEvent) => void;
+  onPressCompleted: (e?: GestureResponderEvent) => void;
+  isCompletedView: boolean;
+}
+
+export default function TasksFilter({
+  onPressCompleted,
+  onPressInprogress,
+  isCompletedView,
+}: ITasksFilterProps) {
   const theme = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.inverseOnSurface }]}>
-      <Button mode="contained" style={styles.button}>
-        Completed
-      </Button>
-      <Button mode="outlined" style={styles.button}>
+      <Button
+        mode={isCompletedView ? 'outlined' : 'contained-tonal'}
+        style={styles.button}
+        onPress={onPressInprogress}
+      >
         In Progress
+      </Button>
+      <Button
+        mode={isCompletedView ? 'contained' : 'outlined'}
+        style={styles.button}
+        onPress={onPressCompleted}
+      >
+        Completed
       </Button>
     </View>
   );
