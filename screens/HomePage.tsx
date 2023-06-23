@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
 
@@ -21,7 +21,7 @@ export default function HomePage() {
 
   const { refreshing, refreshHandler } = useRefresh(fetchAllTask);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     fetchAllTask();
   }, []);
 
