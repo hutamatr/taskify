@@ -4,10 +4,12 @@ import { Button } from 'react-native-paper';
 
 import RecentTasks from './RecentTasks';
 import Text from '../../ui/Text';
+import { useStore } from '../../../store/useStore';
 import { type HomeNavigationProp } from '../../../types/types';
 
 export default function Tasks() {
   const navigation = useNavigation<HomeNavigationProp>();
+  const tasks = useStore((state) => state.tasks);
 
   const showAllTaskHandler = () => {
     navigation.navigate('Tasks');
@@ -21,16 +23,18 @@ export default function Tasks() {
         </Text>
       </View>
       <RecentTasks />
-      <View style={styles.buttonContainer}>
-        <Button
-          mode="text"
-          onPress={showAllTaskHandler}
-          style={styles.button}
-          labelStyle={{ fontSize: 16 }}
-        >
-          View all
-        </Button>
-      </View>
+      {tasks.length > 0 && (
+        <View style={styles.buttonContainer}>
+          <Button
+            mode="text"
+            onPress={showAllTaskHandler}
+            style={styles.button}
+            labelStyle={{ fontSize: 16 }}
+          >
+            View all
+          </Button>
+        </View>
+      )}
     </View>
   );
 }

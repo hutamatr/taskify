@@ -24,7 +24,14 @@ export default function RecentTasks() {
           {error.errorMessage}
         </Text>
       )}
-      {!isLoading && !error.isError && (
+      {tasks.length === 0 && (
+        <View style={styles.taskEmptyContainer}>
+          <Text fontType="medium" variant="headlineSmall">
+            Task Empty
+          </Text>
+        </View>
+      )}
+      {!isLoading && !error.isError && tasks.length > 0 && (
         <>
           {tasks.slice(0, 3).map((item) => {
             return (
@@ -50,14 +57,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   taskEmptyContainer: {
-    padding: 8,
-    margin: 24,
+    padding: 12,
+    margin: 34,
     borderRadius: 8,
     backgroundColor: '#cfcf',
-  },
-  taskEmptyText: {
-    fontSize: 20,
-    textAlign: 'center',
   },
   loading: {
     textAlign: 'center',
