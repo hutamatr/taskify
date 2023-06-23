@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
-import { useEffect } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { useLayoutEffect } from 'react';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
 
 import Categories from '../components/home-page/categories/Categories';
@@ -8,16 +8,20 @@ import Header from '../components/home-page/HomeHeader';
 import TasksSummary from '../components/home-page/summary/TasksSummary';
 import Tasks from '../components/home-page/tasks/Tasks';
 import useHandleScroll from '../hooks/useHandleScroll';
+import useRefresh from '../hooks/useRefresh';
 import { useStore } from '../store/useStore';
 import { type HomeNavigationProp } from '../types/types';
 
 export default function HomePage() {
   const { handleScroll, showButton } = useHandleScroll();
+
   const navigate = useNavigation<HomeNavigationProp>();
 
   const fetchAllTask = useStore((state) => state.fetchAllTasksHandler);
 
-  useEffect(() => {
+  const { refreshing, refreshHandler } = useRefresh(fetchAllTask);
+
+  useLayoutEffect(() => {
     fetchAllTask();
   }, []);
 
@@ -31,6 +35,7 @@ export default function HomePage() {
         onScroll={handleScroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
       >
         <Header />
         <TasksSummary />
