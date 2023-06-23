@@ -19,11 +19,18 @@ export default function Tasks() {
         <Text variant="headlineSmall" fontType="regular">
           Recent Task
         </Text>
-        <Button mode="text" onPress={showAllTaskHandler}>
-          See all
-        </Button>
       </View>
       <RecentTasks />
+      <View style={styles.buttonContainer}>
+        <Button
+          mode="text"
+          onPress={showAllTaskHandler}
+          style={styles.button}
+          labelStyle={{ fontSize: 16 }}
+        >
+          View all
+        </Button>
+      </View>
     </View>
   );
 }
@@ -33,10 +40,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   titleContainer: {
-    flexDirection: 'row',
+    marginVertical: 16,
+    marginHorizontal: 8,
+  },
+  buttonContainer: {
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 8,
-    marginBottom: 16,
+  },
+  button: {
+    width: '50%',
   },
 });
