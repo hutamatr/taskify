@@ -4,51 +4,116 @@ import {
   collection,
   deleteDoc,
   doc,
-  getDocs,
   getFirestore,
   onSnapshot,
   query as firebaseQuery,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 
 import { app } from './firebase';
+import { ITaskSlice } from '../store/tasksSlice';
 import { ITask } from '../types/types';
+
+type Set = (
+  partial:
+    | ITaskSlice
+    | Partial<ITaskSlice>
+    | ((state: ITaskSlice) => ITaskSlice | Partial<ITaskSlice>),
+  replace?: boolean | undefined
+) => void;
 
 const collectionName = 'tasks';
 // init services
 const db = getFirestore();
 // collection ref
-const colRef = collection(db, collectionName);
+export const colRef = collection(db, collectionName);
 // queries
-const query = firebaseQuery(colRef);
+export const query = firebaseQuery(colRef);
+const queryCompleted = firebaseQuery(colRef, where('isCompleted', '==', true));
+const queryInProgress = firebaseQuery(colRef, where('isCompleted', '==', false));
 
 export function auth() {
   const auth = getAuth(app);
   return auth;
 }
 
-export function getAllTasks() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tasks: any[] = [];
-  onSnapshot(query, (snapshot) => {
-    snapshot.docs.forEach((doc) => {
-      tasks.push({
-        ...doc.data(),
-        id: doc.id,
+export function getAllTasks(set: Set) {
+  return onSnapshot(
+    query,
+    (snapshot) => {
+      const tasks: unknown[] = [];
+      snapshot.docs.forEach((doc) => {
+        tasks.push({
+          ...doc.data(),
+          id: doc.id,
+        });
       });
-    });
-  });
-  return tasks;
+      set(
+        (state) => ({
+          ...state,
+          isLoading: false,
+          tasks: (tasks as ITask[]).sort((a, b) => +new Date(b.date) - +new Date(a.date)),
+        }),
+        true
+      );
+    },
+    (error) => {
+      throw new Error(error.message);
+    }
+  );
+}
 
-  // getDocs(colRef)
-  //   .then((snapshot) => {
-  //     snapshot.docs.forEach((doc) => {
-  //       tasks.push({ ...doc.data(), id: doc.id });
-  //     });
-  //   })
-  //   .catch((err) => {
-  //     return err;
-  //   });
+export function getAllInProgress(set: Set) {
+  onSnapshot(
+    queryInProgress,
+    (snapshot) => {
+      const tasks: unknown[] = [];
+      snapshot.docs.forEach((doc) => {
+        tasks.push({
+          ...doc.data(),
+          id: doc.id,
+        });
+      });
+      set(
+        (state) => ({
+          ...state,
+          isLoading: false,
+          inProgressTasks: (tasks as ITask[]).sort((a, b) => +new Date(b.date) - +new Date(a.date)),
+        }),
+        true
+      );
+    },
+    (error) => {
+      throw new Error(error.message);
+    }
+  );
+}
+
+export function getAllCompleted(set: Set) {
+  onSnapshot(
+    queryCompleted,
+    (snapshot) => {
+      const tasks: unknown[] = [];
+      snapshot.docs.forEach((doc) => {
+        tasks.push({
+          ...doc.data(),
+          id: doc.id,
+        });
+      });
+      set(
+        (state) => ({
+          ...state,
+          isLoading: false,
+          completedTasks: tasks as ITask[],
+        }),
+        true
+      );
+    },
+    (error) => {
+      throw new Error(error.message);
+    }
+  );
 }
 
 export function getTask(taskId: string) {
@@ -70,9 +135,9 @@ export async function addTask({ title, description, date }: ITask) {
   await addDoc(colRef, task);
 }
 
-export function updateTask({ id, ...rest }: ITask) {
+export async function updateTask({ id, ...rest }: ITask) {
   const docRef = doc(db, collectionName, id as string);
-  updateDoc(docRef, { updatedAt: new Date().toISOString(), ...rest });
+  await updateDoc(docRef, { updatedAt: new Date().toISOString(), ...rest });
 }
 
 export async function deleteTask(id: string) {
