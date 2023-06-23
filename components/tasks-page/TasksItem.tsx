@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { Card } from 'react-native-paper';
+import { Card, useTheme } from 'react-native-paper';
 
 import Text from '../ui/Text';
 
@@ -11,17 +11,26 @@ interface ITaskItemProps {
   isCompleted?: boolean;
 }
 
-export default function TasksItem({ title, description, date }: ITaskItemProps) {
+export default function TasksItem({ title, description, date, isCompleted }: ITaskItemProps) {
+  const theme = useTheme();
+
   return (
-    <Card style={styles.itemContainer} mode="contained" contentStyle={styles.itemContainer}>
+    <Card
+      style={[
+        styles.itemContainer,
+        { backgroundColor: isCompleted ? theme.colors.primary : theme.colors.inversePrimary },
+      ]}
+      mode="contained"
+      contentStyle={styles.itemContainer}
+    >
       <Card.Content style={styles.cardContentContainer}>
-        <Text variant="titleLarge" fontType="medium">
+        <Text variant="headlineSmall" fontType="medium" numberOfLines={1} lineBreakMode="tail">
           {title}
         </Text>
-        <Text variant="bodySmall" fontType="regular">
+        <Text variant="bodyLarge" fontType="medium" numberOfLines={2} lineBreakMode="tail">
           {description}
         </Text>
-        <Text variant="bodyLarge" fontType="regular">
+        <Text variant="bodySmall" fontType="regular">
           {new Date(date).toLocaleString()}
         </Text>
       </Card.Content>
