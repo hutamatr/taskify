@@ -1,9 +1,29 @@
+import { useMemo } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { Card } from 'react-native-paper';
+import { shallow } from 'zustand/shallow';
 
+import Loading from '../../ui/Loading';
 import Text from '../../ui/Text';
+import { useStore } from '../../../store/useStore';
 
 export default function SummaryCard() {
+  const { tasks, isLoading } = useStore(
+    (state) => ({
+      tasks: state.tasks,
+      isLoading: state.isLoading,
+    }),
+    shallow
+  );
+
+  const totalInProgress = useMemo(() => {
+    return tasks.filter((task) => task.isCompleted === false).length;
+  }, [tasks]);
+
+  const totalDone = useMemo(() => {
+    return tasks.filter((task) => task.isCompleted === true).length;
+  }, [tasks]);
+
   return (
     <View style={styles.cardContainer}>
       <Card
@@ -11,25 +31,53 @@ export default function SummaryCard() {
         style={styles.summaryCard}
         theme={{ roundness: 8 }}
         contentStyle={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
+          flexDirection: isLoading ? 'column' : 'row',
+          justifyContent: isLoading ? 'center' : 'space-between',
           alignItems: 'center',
+          height: 120,
         }}
       >
-        <Card.Content style={styles.cardContent}>
-          <Text variant="displayMedium" fontType="regular">
-            12
-          </Text>
-          <Text variant="titleMedium" fontType="semibold">
-            task in progress
-          </Text>
-        </Card.Content>
-        <View style={styles.imageContainer}>
-          <Image source={require('../../../assets/images/task.png')} style={styles.image} />
-        </View>
+        {isLoading && <Loading size="large" />}
+        {!isLoading && (
+          <>
+            <Card.Content style={styles.cardContent}>
+              <Text variant="displayMedium" fontType="regular">
+                {totalInProgress > 99 ? '99+' : totalInProgress.toString()}
+              </Text>
+              <Text variant="titleMedium" fontType="semibold">
+                {totalInProgress > 1 ? 'tasks' : 'task'} in progress
+              </Text>
+            </Card.Content>
+            <View style={styles.imageContainer}>
+              <Image source={require('../../../assets/images/task.png')} style={styles.image} />
+            </View>
+          </>
+        )}
       </Card>
       <View style={styles.cardContainerChild}>
-        <Card style={styles.summaryCard} mode="contained" theme={{ roundness: 8 }}>
+        <Card
+          mode="contained"
+          style={styles.summaryCard}
+          theme={{ roundness: 8 }}
+          contentStyle={{
+            justifyContent: 'center',
+            alignItems: isLoading ? 'center' : 'flex-start',
+            height: 120,
+          }}
+        >
+          {isLoading && <Loading size="large" />}
+          {!isLoading && (
+            <Card.Content style={styles.cardContent}>
+              <Text variant="displayMedium" fontType="regular">
+                {totalDone > 99 ? '99+' : totalDone.toString()}
+              </Text>
+              <Text variant="titleMedium" fontType="semibold">
+                {totalDone > 1 ? 'tasks' : 'task'} done
+              </Text>
+            </Card.Content>
+          )}
+        </Card>
+        {/* <Card style={styles.summaryCard} mode="contained" theme={{ roundness: 8 }}>
           <Card.Content style={styles.cardContent}>
             <Text variant="displayMedium" fontType="regular">
               16
@@ -38,17 +86,7 @@ export default function SummaryCard() {
               task in todo
             </Text>
           </Card.Content>
-        </Card>
-        <Card mode="contained" style={styles.summaryCard} theme={{ roundness: 8 }}>
-          <Card.Content style={styles.cardContent}>
-            <Text variant="displayMedium" fontType="regular">
-              20
-            </Text>
-            <Text variant="titleMedium" fontType="semibold">
-              task in done
-            </Text>
-          </Card.Content>
-        </Card>
+        </Card> */}
       </View>
     </View>
   );
@@ -64,7 +102,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   cardContent: {
-    rowGap: 12,
+    rowGap: 8,
   },
   imageContainer: {
     width: 80,
@@ -78,5 +116,11 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
+  },
+  loading: {
+    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 16,
   },
 });

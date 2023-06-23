@@ -7,7 +7,7 @@ interface IUseInputStateProps<T> {
 const useInputState = <T>(inputState: IUseInputStateProps<T>) => {
   const [input, setInput] = useState(inputState.inputState);
 
-  const onChangeInputHandler = (identifier: string, text: string) => {
+  const onChangeInputHandler = (identifier: string, text: string | Date) => {
     setInput((prevState) => ({ ...prevState, [identifier]: text }));
   };
 

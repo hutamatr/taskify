@@ -5,27 +5,56 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import { shallow } from 'zustand/shallow';
 
 import TaskItem from './TasksItem';
-import { DUMMY_DATA } from '../../utils/dummy';
+import Loading from '../ui/Loading';
+import Text from '../ui/Text';
+import { useStore } from '../../store/useStore';
+import { type ITask } from '../../types/types';
 
 interface ITaskListProps {
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+  tasks: ITask[];
 }
 
-export default function TasksList({ onScroll }: ITaskListProps) {
+export default function TasksList({ onScroll, tasks }: ITaskListProps) {
+  const { isLoading, error } = useStore(
+    (state) => ({
+      isLoading: state.isLoading,
+      error: state.error,
+      fetchAllTask: state.fetchAllTasksHandler,
+    }),
+    shallow
+  );
+  // const { refreshing, refreshHandler } = useRefresh(fetchAllTask);
+
   return (
     <View style={styles.listContainer}>
-      <FlatList
-        data={DUMMY_DATA}
-        renderItem={({ item }) => (
-          <TaskItem description={item.description} createdAt={item.createdAt} />
-        )}
-        keyExtractor={(item) => item.id as string}
-        onScroll={onScroll}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-      />
+      {isLoading && <Loading size="large" />}
+      {error?.isError && (
+        <Text fontType="medium" style={styles.error} variant="headlineSmall">
+          {error.errorMessage}
+        </Text>
+      )}
+      {!isLoading && !error.isError && tasks.length === 0 && (
+        <View style={styles.taskEmptyContainer}>
+          <Text fontType="medium" variant="headlineSmall">
+            Task Empty
+          </Text>
+        </View>
+      )}
+      {!isLoading && !error.isError && tasks.length > 0 && (
+        <FlatList
+          data={tasks}
+          renderItem={({ item }) => <TaskItem {...item} />}
+          keyExtractor={(item) => item.id as string}
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+          // refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
+        />
+      )}
     </View>
   );
 }
@@ -34,5 +63,22 @@ const styles = StyleSheet.create({
   listContainer: {
     marginHorizontal: 16,
     marginBottom: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  taskEmptyContainer: {
+    margin: 34,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#cfcf',
+  },
+  loading: {
+    textAlign: 'center',
+    margin: 24,
+  },
+  error: {
+    textAlign: 'center',
+    margin: 24,
+    color: 'red',
   },
 });

@@ -4,11 +4,13 @@ import { type NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export interface ITask {
   id?: string;
-  author: string;
+  title: string;
   description: string;
-  isCompleted: boolean;
-  createdAt: string;
-  updatedAt: string;
+  date: string;
+  isCompleted?: boolean;
+  createdAt?: string;
+  updatedAt?: string | null;
+  categoryId?: string;
 }
 
 export interface ICategories {
@@ -33,3 +35,5 @@ export type TasksNavigationProp = NativeStackNavigationProp<RootStackParamList, 
 export type CategoriesNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Categories'>;
 
 export type ProfileNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
+
+export type CreateTaskNavigationProp = NativeStackNavigationProp<RootStackParamList, 'CreateTask'>;
