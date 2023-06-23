@@ -5,26 +5,39 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import { shallow } from 'zustand/shallow';
 
 import TaskItem from './TasksItem';
+import Loading from '../ui/Loading';
 import Text from '../ui/Text';
 import { useStore } from '../../store/useStore';
+import { type ITask } from '../../types/types';
 
 interface ITaskListProps {
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+  tasks: ITask[];
 }
 
-export default function TasksList({ onScroll }: ITaskListProps) {
-  const tasks = useStore((state) => state.tasks);
-  const isLoading = useStore((state) => state.isLoading);
-
-  console.log({ tasks });
+export default function TasksList({ onScroll, tasks }: ITaskListProps) {
+  const { isLoading, error } = useStore(
+    (state) => ({
+      isLoading: state.isLoading,
+      error: state.error,
+      fetchAllTask: state.fetchAllTasksHandler,
+    }),
+    shallow
+  );
+  // const { refreshing, refreshHandler } = useRefresh(fetchAllTask);
 
   return (
     <View style={styles.listContainer}>
-      {isLoading ? (
-        <Text fontType="medium">Loading...</Text>
-      ) : (
+      {isLoading && <Loading size="large" />}
+      {error?.isError && (
+        <Text fontType="medium" style={styles.error} variant="headlineSmall">
+          {error.errorMessage}
+        </Text>
+      )}
+      {!isLoading && !error.isError && (
         <FlatList
           data={tasks}
           renderItem={({ item }) => <TaskItem {...item} />}
@@ -32,6 +45,7 @@ export default function TasksList({ onScroll }: ITaskListProps) {
           onScroll={onScroll}
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
+          // refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
         />
       )}
     </View>
@@ -42,5 +56,14 @@ const styles = StyleSheet.create({
   listContainer: {
     marginHorizontal: 16,
     marginBottom: 150,
+  },
+  loading: {
+    textAlign: 'center',
+    margin: 24,
+  },
+  error: {
+    textAlign: 'center',
+    margin: 24,
+    color: 'red',
   },
 });
