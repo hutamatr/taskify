@@ -10,6 +10,7 @@ export interface ITask {
   isCompleted?: boolean;
   createdAt?: string;
   updatedAt?: string | null;
+  categoryId?: string;
 }
 
 export interface ICategories {
