@@ -1,6 +1,6 @@
-import { type MaterialBottomTabNavigationProp } from '@react-navigation/material-bottom-tabs';
-import { type ParamListBase } from '@react-navigation/native';
-import { type NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { MaterialBottomTabNavigationProp } from '@react-navigation/material-bottom-tabs';
+import type { ParamListBase, RouteProp } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export interface ITask {
   id?: string;
@@ -11,11 +11,13 @@ export interface ITask {
   createdAt?: string;
   updatedAt?: string | null;
   categoryId?: string;
+  categoryName?: string;
 }
 
 export interface ICategories {
   id?: string;
   name: string;
+  createdAt?: string;
 }
 
 export interface RootStackParamList extends ParamListBase {
@@ -26,6 +28,7 @@ export interface RootStackParamList extends ParamListBase {
   HomeTabs: undefined;
   CreateTask: undefined;
   CreateCategories: undefined;
+  CategoriesDetail: ICategories;
 }
 
 export type HomeNavigationProp = MaterialBottomTabNavigationProp<RootStackParamList, 'Home'>;
@@ -37,3 +40,17 @@ export type CategoriesNavigationProp = NativeStackNavigationProp<RootStackParamL
 export type ProfileNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
 
 export type CreateTaskNavigationProp = NativeStackNavigationProp<RootStackParamList, 'CreateTask'>;
+
+export type CreateCategoriesNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'CreateCategories'
+>;
+
+export type CategoriesDetailNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'CategoriesDetail'
+>;
+
+export type CategoriesDetailScreenRouteProp = RouteProp<RootStackParamList, 'CategoriesDetail'>;
+
+export type CategoriesScreenRouteProp = RouteProp<RootStackParamList, 'Categories'>;
