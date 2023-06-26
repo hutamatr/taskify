@@ -1,35 +1,41 @@
-import { type StyleProp, StyleSheet, type ViewStyle } from 'react-native';
-import { Card } from 'react-native-paper';
-import { type VariantProp } from 'react-native-paper/lib/typescript/src/components/Typography/types';
+import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import { Button } from 'react-native-paper';
+import type { VariantProp } from 'react-native-paper/lib/typescript/src/components/Typography/types';
 
 import Text from '../ui/Text';
-import { type ICategories } from '../../types/types';
+import type { ICategories } from '../../types/types';
 
 interface ICategoriesItemProps extends ICategories {
   style?: StyleProp<ViewStyle>;
-  textVariant: VariantProp<unknown>;
+  textVariant?: VariantProp<unknown>;
+  mode: 'text' | 'outlined' | 'contained' | 'elevated' | 'contained-tonal' | undefined;
+  onPress?: () => void;
 }
 
-export default function CategoriesItem({ name, textVariant, style }: ICategoriesItemProps) {
+export default function CategoriesItem({
+  name,
+  textVariant,
+  style,
+  onPress,
+  mode,
+}: ICategoriesItemProps) {
   return (
-    <Card style={[styles.item, style]} mode="contained" theme={{ roundness: 8 }}>
-      <Card.Content style={styles.itemContent}>
-        <Text variant={textVariant} lineBreakMode="tail" fontType="regular">
-          {name}
-        </Text>
-      </Card.Content>
-    </Card>
+    <Button
+      contentStyle={{ height: '100%' }}
+      style={[styles.item, style]}
+      mode={mode}
+      theme={{ roundness: 4 }}
+      onPress={onPress}
+    >
+      <Text variant={textVariant} lineBreakMode="tail" fontType="regular">
+        {name}
+      </Text>
+    </Button>
   );
 }
 
 const styles = StyleSheet.create({
   item: {
     flex: 1,
-    padding: 8,
-    height: '100%',
-  },
-  itemContent: {
-    justifyContent: 'center',
-    alignItems: 'flex-start',
   },
 });
