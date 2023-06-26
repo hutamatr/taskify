@@ -1,4 +1,4 @@
-import { type StateCreator } from 'zustand';
+import type { StateCreator } from 'zustand';
 
 import {
   addTask,
@@ -6,10 +6,11 @@ import {
   getAllCompleted,
   getAllInProgress,
   getAllTasks,
+  getAllTasksByCategory,
   getTask,
   updateTask,
 } from '../api/api';
-import { type ITask } from '../types/types';
+import type { ITask } from '../types/types';
 
 interface ITaskError {
   isError: boolean;
@@ -17,15 +18,16 @@ interface ITaskError {
 }
 export interface ITaskSlice {
   tasks: ITask[];
-  // recentTasks: ITask[];
   inProgressTasks: ITask[];
   completedTasks: ITask[];
+  tasksByCategory: ITask[];
   task: ITask | object;
   isLoading: boolean;
   error: ITaskError;
   fetchAllTasksHandler: () => void;
-  fetchAllInProgress: () => void;
-  fetchAllCompleted: () => void;
+  fetchAllInProgressHandler: () => void;
+  fetchAllCompletedHandler: () => void;
+  fetchAllTasksByCategoryHandler: (categoryId: string) => void;
   fetchTaskHandler: (taskId: string) => void;
   addTaskHandler: (task: ITask) => void;
   updateTaskHandler: (task: ITask) => void;
@@ -34,31 +36,40 @@ export interface ITaskSlice {
 
 export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) => ({
   tasks: [],
-  // recentTasks: [],
   inProgressTasks: [],
   completedTasks: [],
+  tasksByCategory: [],
   task: {},
   isLoading: false,
   error: { isError: false, errorMessage: '' },
   fetchAllTasksHandler: () => {
     try {
-      set({ isLoading: true });
+      set({
+        isLoading: true,
+        error: { isError: false, errorMessage: '' },
+      });
       getAllTasks(set);
     } catch (error) {
       set({ isLoading: false, error: { isError: true, errorMessage: 'Failed get all task data' } });
     }
   },
-  fetchAllInProgress: () => {
+  fetchAllInProgressHandler: () => {
     try {
-      set({ isLoading: true });
+      set({
+        isLoading: true,
+        error: { isError: false, errorMessage: '' },
+      });
       getAllInProgress(set);
     } catch (error) {
       set({ isLoading: false, error: { isError: true, errorMessage: 'Failed get all task data' } });
     }
   },
-  fetchAllCompleted: () => {
+  fetchAllCompletedHandler: () => {
     try {
-      set({ isLoading: true });
+      set({
+        isLoading: true,
+        error: { isError: false, errorMessage: '' },
+      });
       getAllCompleted(set);
     } catch (error) {
       set({
@@ -67,9 +78,23 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
       });
     }
   },
+  fetchAllTasksByCategoryHandler: (categoryId) => {
+    try {
+      set({
+        isLoading: true,
+        error: { isError: false, errorMessage: '' },
+      });
+      getAllTasksByCategory(categoryId, set);
+    } catch (error) {
+      set({ isLoading: false, error: { isError: true, errorMessage: 'Failed get task data' } });
+    }
+  },
   fetchTaskHandler: (taskId) => {
     try {
-      set({ isLoading: true });
+      set({
+        isLoading: true,
+        error: { isError: false, errorMessage: '' },
+      });
       const taskData = getTask(taskId);
       set(() => ({
         isLoading: false,
@@ -79,10 +104,13 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
       set({ isLoading: false, error: { isError: true, errorMessage: 'Failed get task data' } });
     }
   },
-  addTaskHandler: async ({ title, description, date }: ITask) => {
+  addTaskHandler: async (task) => {
     try {
-      set({ isLoading: true });
-      await addTask({ title, description, date });
+      set({
+        isLoading: true,
+        error: { isError: false, errorMessage: '' },
+      });
+      await addTask(task);
       set({ isLoading: false });
     } catch (error) {
       set({ isLoading: false, error: { isError: true, errorMessage: 'Failed send task' } });
@@ -90,7 +118,10 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
   },
   updateTaskHandler: async (task) => {
     try {
-      set({ isLoading: true });
+      set({
+        isLoading: true,
+        error: { isError: false, errorMessage: '' },
+      });
       await updateTask(task);
       set({ isLoading: false });
     } catch (error) {
@@ -99,7 +130,10 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
   },
   deleteTaskHandler: async (taskId) => {
     try {
-      set({ isLoading: true });
+      set({
+        isLoading: true,
+        error: { isError: false, errorMessage: '' },
+      });
       await deleteTask(taskId);
       set({ isLoading: false });
     } catch (error) {
