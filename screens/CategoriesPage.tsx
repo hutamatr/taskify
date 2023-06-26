@@ -1,31 +1,40 @@
-import { useNavigation } from '@react-navigation/native';
+import BottomSheet from '@gorhom/bottom-sheet';
+import { useCallback, useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
 
 import CategoriesHeader from '../components/categories-page/CategoriesHeader';
 import CategoriesList from '../components/categories-page/CategoriesList';
+import CategoriesForm from '../components/createcategories-page/CategoriesForm';
 import useHandleScroll from '../hooks/useHandleScroll';
-import { type CategoriesNavigationProp } from '../types/types';
+import { useStore } from '../store/useStore';
 
 export default function CategoriesPage() {
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const createNewCategoriesHandler = useCallback((index: number) => {
+    bottomSheetRef.current?.snapToIndex(index);
+  }, []);
+
   const { handleScroll, showButton } = useHandleScroll();
 
-  const navigation = useNavigation<CategoriesNavigationProp>();
+  const fetchAllCategories = useStore((state) => state.fetchAllCategoriesHandler);
 
-  const createNewCategoriesHandler = () => {
-    navigation.navigate('CreateCategories');
-  };
+  useEffect(() => {
+    fetchAllCategories();
+  }, []);
 
   return (
     <View style={styles.container}>
       <CategoriesHeader />
       <CategoriesList onScroll={handleScroll} />
+      <CategoriesForm bottomSheetRef={bottomSheetRef} />
       <AnimatedFAB
         icon="plus"
         variant="tertiary"
         label="Add Category"
         extended={showButton}
-        onPress={createNewCategoriesHandler}
+        onPress={createNewCategoriesHandler.bind(null, 0)}
         visible={true}
         animateFrom="right"
         iconMode="dynamic"
