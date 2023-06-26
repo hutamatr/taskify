@@ -11,36 +11,45 @@ import {
   where,
 } from 'firebase/firestore';
 
+import type { ICategoriesSlice } from './../store/categoriesSlice';
 import { app } from './firebase';
-import { ITaskSlice } from '../store/tasksSlice';
-import { ITask } from '../types/types';
+import type { ITaskSlice } from '../store/tasksSlice';
+import type { ICategories, ITask } from '../types/types';
 
-type Set = (
-  partial:
-    | ITaskSlice
-    | Partial<ITaskSlice>
-    | ((state: ITaskSlice) => ITaskSlice | Partial<ITaskSlice>),
+type Set<T> = (
+  partial: T | Partial<T> | ((state: T) => T | Partial<T>),
   replace?: boolean | undefined
 ) => void;
 
-const collectionName = 'tasks';
+const collectionTasks = 'tasks';
+const collectionCategories = 'categories';
+
 // init services
 const db = getFirestore();
+
 // collection ref
-export const colRef = collection(db, collectionName);
+const tasksColRef = collection(db, collectionTasks);
+const categoriesColRef = collection(db, collectionCategories);
+
 // queries
-export const query = firebaseQuery(colRef);
-const queryCompleted = firebaseQuery(colRef, where('isCompleted', '==', true));
-const queryInProgress = firebaseQuery(colRef, where('isCompleted', '==', false));
+const queryTasks = firebaseQuery(tasksColRef);
+const queryCompleted = firebaseQuery(tasksColRef, where('isCompleted', '==', true));
+const queryInProgress = firebaseQuery(tasksColRef, where('isCompleted', '==', false));
+
+const queryCategories = firebaseQuery(categoriesColRef);
+
+// ##### AUTH ##### //
 
 export function auth() {
   const auth = getAuth(app);
   return auth;
 }
 
-export function getAllTasks(set: Set) {
+// ##### TASKS ##### //
+
+export function getAllTasks(set: Set<ITaskSlice>) {
   return onSnapshot(
-    query,
+    queryTasks,
     (snapshot) => {
       const tasks: unknown[] = [];
       snapshot.docs.forEach((doc) => {
@@ -64,7 +73,7 @@ export function getAllTasks(set: Set) {
   );
 }
 
-export function getAllInProgress(set: Set) {
+export function getAllInProgress(set: Set<ITaskSlice>) {
   onSnapshot(
     queryInProgress,
     (snapshot) => {
@@ -90,7 +99,7 @@ export function getAllInProgress(set: Set) {
   );
 }
 
-export function getAllCompleted(set: Set) {
+export function getAllCompleted(set: Set<ITaskSlice>) {
   onSnapshot(
     queryCompleted,
     (snapshot) => {
@@ -117,30 +126,111 @@ export function getAllCompleted(set: Set) {
 }
 
 export function getTask(taskId: string) {
-  const docRef = doc(db, collectionName, taskId);
+  const docRef = doc(db, collectionTasks, taskId);
   return onSnapshot(docRef, (doc) => {
     return doc.data();
   });
 }
 
-export async function addTask({ title, description, date }: ITask) {
+export async function addTask(newTask: ITask) {
   const task: ITask = {
-    title,
-    description,
-    date,
+    ...newTask,
     isCompleted: false,
     createdAt: new Date().toISOString(),
     updatedAt: null,
   };
-  await addDoc(colRef, task);
+  await addDoc(tasksColRef, task);
 }
 
 export async function updateTask({ id, ...rest }: ITask) {
-  const docRef = doc(db, collectionName, id as string);
+  const docRef = doc(db, collectionTasks, id as string);
   await updateDoc(docRef, { updatedAt: new Date().toISOString(), ...rest });
 }
 
 export async function deleteTask(id: string) {
-  const docRef = doc(db, collectionName, id);
+  const docRef = doc(db, collectionTasks, id);
   await deleteDoc(docRef);
+}
+
+// ##### CATEGORIES ##### //
+
+export function getAllCategories(set: Set<ICategoriesSlice>) {
+  onSnapshot(
+    queryCategories,
+    (snapshot) => {
+      const categories: unknown[] = [];
+      snapshot.docs.forEach((doc) => {
+        categories.push({
+          ...doc.data(),
+          id: doc.id,
+        });
+      });
+      set(
+        (state) => ({
+          ...state,
+          isLoading: false,
+          categories: (categories as ICategories[]).sort(
+            (a, b) => +new Date(b.createdAt as string) - +new Date(a.createdAt as string)
+          ),
+        }),
+        true
+      );
+    },
+    (error) => {
+      throw new Error(error.message);
+    }
+  );
+}
+
+export async function addCategories({ name }: ICategories) {
+  const categories: ICategories = {
+    name,
+    createdAt: new Date().toISOString(),
+  };
+  await addDoc(categoriesColRef, categories);
+}
+
+export function getAllTasksByCategory(selectedCategoryId: string, set: Set<ITaskSlice>) {
+  onSnapshot(
+    firebaseQuery(tasksColRef, where('categoryId', '==', selectedCategoryId)),
+    (snapshot) => {
+      const tasks: unknown[] = [];
+      snapshot.docs.forEach((doc) => {
+        tasks.push({
+          ...doc.data(),
+          id: doc.id,
+        });
+      });
+      set(
+        (state) => ({
+          ...state,
+          isLoading: false,
+          tasksByCategory: (tasks as ITask[]).sort((a, b) => +new Date(b.date) - +new Date(a.date)),
+        }),
+        true
+      );
+    },
+    (error) => {
+      throw new Error(error.message);
+    }
+  );
+}
+
+export async function deleteCategory(id: string) {
+  const docRef = doc(categoriesColRef, id);
+  await deleteDoc(docRef);
+}
+
+export async function deleteCategoryWithTasks(categoryId: string) {
+  // Delete the category document
+  await deleteCategory(categoryId);
+
+  // Query and delete associated tasks
+  const tasksQuery = firebaseQuery(tasksColRef, where('categoryId', '==', categoryId));
+  onSnapshot(tasksQuery, (snapshot) => {
+    snapshot.docs.forEach((taskDoc) => {
+      const taskRef = doc(tasksColRef, taskDoc.id);
+      deleteDoc(taskRef);
+    });
+  });
 }
