@@ -13,9 +13,9 @@ import 'expo-dev-client';
 
 import Text from './components/ui/Text';
 import HomeTabsNavigation from './navigation/HomeTabsNavigation';
-import CreateCategoriesPage from './screens/CreateCategoriesPage';
+import CategoriesDetailPage from './screens/CategoriesDetailPage';
 import CreateTaskPage from './screens/CreateTaskPage';
-import { type RootStackParamList } from './types/types';
+import type { RootStackParamList } from './types/types';
 
 const customFonts = {
   'plus-jakarta-sans-regular': PlusJakartaSans_400Regular,
@@ -77,16 +77,10 @@ export default function App() {
               }}
             />
             <Stack.Screen
-              name="CreateCategories"
-              component={CreateCategoriesPage}
+              name="CategoriesDetail"
+              component={CategoriesDetailPage}
               options={{
-                title: 'Create Categories',
                 headerShadowVisible: false,
-                headerTitle: () => (
-                  <Text fontType="regular" variant="headlineSmall">
-                    Create Categories
-                  </Text>
-                ),
                 headerStyle: { backgroundColor: theme.colors.inversePrimary },
                 statusBarStyle: 'dark',
                 statusBarColor: theme.colors.inversePrimary,

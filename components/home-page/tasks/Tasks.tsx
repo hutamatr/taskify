@@ -5,7 +5,7 @@ import { Button } from 'react-native-paper';
 import RecentTasks from './RecentTasks';
 import Text from '../../ui/Text';
 import { useStore } from '../../../store/useStore';
-import { type HomeNavigationProp } from '../../../types/types';
+import type { HomeNavigationProp } from '../../../types/types';
 
 export default function Tasks() {
   const navigation = useNavigation<HomeNavigationProp>();

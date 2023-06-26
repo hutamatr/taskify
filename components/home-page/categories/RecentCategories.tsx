@@ -1,13 +1,23 @@
-import { StyleSheet, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 
 import CategoriesItem from '../../categories-page/CategoriesItem';
 import Text from '../../ui/Text';
-import { DUMMY_CATEGORIES } from '../../../utils/dummy';
+import { useStore } from '../../../store/useStore';
+import type { HomeNavigationProp, ICategories } from '../../../types/types';
 
 export default function RecentCategories() {
+  const categories = useStore((state) => state.categories);
+
+  const navigation = useNavigation<HomeNavigationProp>();
+
+  const viewCategoriesDetailHandler = (category: ICategories) => {
+    navigation.navigate('CategoriesDetail', { ...category });
+  };
+
   return (
     <View style={styles.container}>
-      {DUMMY_CATEGORIES.length === 0 ? (
+      {categories.length === 0 ? (
         <View style={styles.categoriesEmptyContainer}>
           <Text style={styles.categoriesEmptyText} fontType="medium">
             Category Empty
@@ -15,13 +25,15 @@ export default function RecentCategories() {
         </View>
       ) : (
         <View style={styles.recentCategoriesContainer}>
-          {DUMMY_CATEGORIES.slice(0, 3).map((category) => {
+          {categories.slice(0, 2).map((category) => {
             return (
               <CategoriesItem
-                key={category.id}
+                key={category.id as string}
                 name={category.name}
                 style={styles.categoriesItem}
                 textVariant="titleMedium"
+                mode="contained"
+                onPress={viewCategoriesDetailHandler.bind(null, category)}
               />
             );
           })}
@@ -55,10 +67,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   categoriesItem: {
-    // marginVertical: 4,
-    // padding: 4,
-    // justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 12,
+    height: Dimensions.get('window').width / 6,
   },
 });

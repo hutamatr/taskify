@@ -11,10 +11,10 @@ import TaskItem from './TasksItem';
 import Loading from '../ui/Loading';
 import Text from '../ui/Text';
 import { useStore } from '../../store/useStore';
-import { type ITask } from '../../types/types';
+import type { ITask } from '../../types/types';
 
 interface ITaskListProps {
-  onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+  onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   tasks: ITask[];
 }
 
@@ -27,7 +27,6 @@ export default function TasksList({ onScroll, tasks }: ITaskListProps) {
     }),
     shallow
   );
-  // const { refreshing, refreshHandler } = useRefresh(fetchAllTask);
 
   return (
     <View style={styles.listContainer}>
@@ -52,7 +51,6 @@ export default function TasksList({ onScroll, tasks }: ITaskListProps) {
           onScroll={onScroll}
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
-          // refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
         />
       )}
     </View>

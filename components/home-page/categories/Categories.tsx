@@ -4,7 +4,7 @@ import { Button } from 'react-native-paper';
 
 import RecentCategories from './RecentCategories';
 import Text from '../../ui/Text';
-import { type CategoriesNavigationProp } from '../../../types/types';
+import type { CategoriesNavigationProp } from '../../../types/types';
 
 export default function Categories() {
   const navigation = useNavigation<CategoriesNavigationProp>();

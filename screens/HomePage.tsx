@@ -10,7 +10,7 @@ import Tasks from '../components/home-page/tasks/Tasks';
 import useHandleScroll from '../hooks/useHandleScroll';
 import useRefresh from '../hooks/useRefresh';
 import { useStore } from '../store/useStore';
-import { type HomeNavigationProp } from '../types/types';
+import type { HomeNavigationProp } from '../types/types';
 
 export default function HomePage() {
   const { handleScroll, showButton } = useHandleScroll();
