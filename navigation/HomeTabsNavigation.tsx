@@ -5,7 +5,7 @@ import AllTaskPage from '../screens/AllTaskPage';
 import CategoriesPage from '../screens/CategoriesPage';
 import HomePage from '../screens/HomePage';
 import ProfilePage from '../screens/ProfilePage';
-import { type RootStackParamList } from '../types/types';
+import type { RootStackParamList } from '../types/types';
 
 const Tabs = createMaterialBottomTabNavigator<RootStackParamList>();
 

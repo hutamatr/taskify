@@ -4,12 +4,12 @@ import { StyleSheet, View } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
 import { shallow } from 'zustand/shallow';
 
-import TaskFilter from '../components/tasks-page/TasksFilter';
+import TasksFilter from '../components/tasks-page/TasksFilter';
 import TasksHeader from '../components/tasks-page/TasksHeader';
-import TaskList from '../components/tasks-page/TasksList';
+import TasksList from '../components/tasks-page/TasksList';
 import useHandleScroll from '../hooks/useHandleScroll';
 import { useStore } from '../store/useStore';
-import { type TasksNavigationProp } from '../types/types';
+import type { TasksNavigationProp } from '../types/types';
 
 export default function AllTaskPage() {
   const { handleScroll, showButton } = useHandleScroll();
@@ -18,8 +18,8 @@ export default function AllTaskPage() {
 
   const { fetchInProgress, fetchCompleted, inProgressTasks, completedTasks } = useStore(
     (state) => ({
-      fetchInProgress: state.fetchAllInProgress,
-      fetchCompleted: state.fetchAllCompleted,
+      fetchInProgress: state.fetchAllInProgressHandler,
+      fetchCompleted: state.fetchAllCompletedHandler,
       inProgressTasks: state.inProgressTasks,
       completedTasks: state.completedTasks,
     }),
@@ -47,12 +47,12 @@ export default function AllTaskPage() {
   return (
     <View style={styles.container}>
       <TasksHeader />
-      <TaskFilter
+      <TasksFilter
         onPressCompleted={completedFilterHandler}
         onPressInprogress={inProgressFilterHandler}
         isCompletedView={isCompletedView}
       />
-      <TaskList
+      <TasksList
         onScroll={handleScroll}
         tasks={isCompletedView ? completedTasks : inProgressTasks}
       />
