@@ -20,11 +20,12 @@ export default function CategoriesDetailPage() {
   const route = useRoute<CategoriesDetailScreenRouteProp>();
   const navigation = useNavigation<CategoriesDetailNavigationProp>();
 
-  const { fetchAllTasksByCategory, deleteCategory, tasksByCategory } = useStore(
+  const { fetchAllTasksByCategory, deleteCategory, tasksByCategory, userInfo } = useStore(
     (state) => ({
       fetchAllTasksByCategory: state.fetchAllTasksByCategoryHandler,
       deleteCategory: state.deleteCategoryHandler,
       tasksByCategory: state.tasksByCategory,
+      userInfo: state.userInfo,
     }),
     shallow
   );
@@ -48,7 +49,7 @@ export default function CategoriesDetailPage() {
   }, [navigation, route]);
 
   useEffect(() => {
-    fetchAllTasksByCategory(route.params.id as string);
+    fetchAllTasksByCategory(userInfo?.uid as string, route.params.id as string);
   }, [route]);
 
   const openMenu = () => setVisible(true);

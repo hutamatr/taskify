@@ -2,8 +2,15 @@ import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 import Text from '../ui/Text';
+import { useStore } from '../../store/useStore';
 
 export default function ProfileList() {
+  const signOut = useStore((state) => state.SignOutHandler);
+
+  const signOutHandler = () => {
+    signOut();
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
@@ -22,7 +29,7 @@ export default function ProfileList() {
           hutamatr@gmail.com
         </Text>
       </View>
-      <Button mode="outlined" style={styles.button}>
+      <Button mode="outlined" style={styles.button} onPress={signOutHandler}>
         <Text fontType="semibold" variant="titleMedium">
           Sign Out
         </Text>

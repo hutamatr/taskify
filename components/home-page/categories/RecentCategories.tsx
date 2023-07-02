@@ -26,9 +26,19 @@ export default function RecentCategories() {
       ) : (
         <View style={styles.recentCategoriesContainer}>
           {categories.slice(0, 2).map((category) => {
+            if (!category.id) {
+              return (
+                <CategoriesItem
+                  key={category.name + category.id}
+                  style={[styles.categoriesItem, { backgroundColor: 'transparent' }]}
+                  mode={undefined}
+                  name=""
+                />
+              );
+            }
             return (
               <CategoriesItem
-                key={category.id as string}
+                key={category.id + category.name}
                 name={category.name}
                 style={styles.categoriesItem}
                 textVariant="titleMedium"

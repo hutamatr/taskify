@@ -1,4 +1,10 @@
-import { getAuth } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from 'firebase/auth';
 import {
   addDoc,
   collection,
@@ -13,8 +19,9 @@ import {
 
 import type { ICategoriesSlice } from './../store/categoriesSlice';
 import { app } from './firebase';
+import type { IAuthSlice } from '../store/authSlice';
 import type { ITaskSlice } from '../store/tasksSlice';
-import type { ICategories, ITask } from '../types/types';
+import type { IAuth, ICategories, ITask } from '../types/types';
 
 type Set<T> = (
   partial: T | Partial<T> | ((state: T) => T | Partial<T>),
@@ -25,31 +32,92 @@ const collectionTasks = 'tasks';
 const collectionCategories = 'categories';
 
 // init services
-const db = getFirestore();
+const db = getFirestore(app);
+
+// init auth
+export const auth = getAuth(app);
+
+// console.log('userId api', { userId });
 
 // collection ref
 const tasksColRef = collection(db, collectionTasks);
 const categoriesColRef = collection(db, collectionCategories);
 
 // queries
-const queryTasks = firebaseQuery(tasksColRef);
-const queryCompleted = firebaseQuery(tasksColRef, where('isCompleted', '==', true));
-const queryInProgress = firebaseQuery(tasksColRef, where('isCompleted', '==', false));
+// const queryTasks = firebaseQuery(tasksColRef, where('userId', '==', userId));
+// const queryCompleted = firebaseQuery(
+//   tasksColRef,
+//   where('userId', '==', userId),
+//   where('isCompleted', '==', true)
+// );
+// const queryInProgress = firebaseQuery(
+//   tasksColRef,
+//   where('userId', '==', userId),
+//   where('isCompleted', '==', false)
+// );
 
-const queryCategories = firebaseQuery(categoriesColRef);
+// const queryCategories = firebaseQuery(categoriesColRef, where('userId', '==', userId));
 
 // ##### AUTH ##### //
 
-export function auth() {
-  const auth = getAuth(app);
-  return auth;
+export async function signUp({ userName, email, password }: IAuth, set: Set<IAuthSlice>) {
+  const createUser = await createUserWithEmailAndPassword(auth, email, password);
+  const user = createUser.user;
+  await updateProfile(user, { displayName: userName });
+
+  set({
+    isLoading: false,
+    userInfo: { email: user.email as string, uid: user.uid },
+    isAuth: Boolean(user.uid),
+  });
+}
+
+export async function signIn({ email, password }: IAuth, set: Set<IAuthSlice>) {
+  const loginUser = await signInWithEmailAndPassword(auth, email, password);
+  const user = loginUser.user;
+  set({
+    isLoading: false,
+    userInfo: { email: user.email as string, uid: user.uid },
+    isAuth: Boolean(user.uid),
+  });
+}
+
+export async function logOut(set: Set<IAuthSlice>) {
+  await signOut(auth);
+  set({
+    isLoading: false,
+    userInfo: null,
+    isAuth: false,
+  });
 }
 
 // ##### TASKS ##### //
 
-export function getAllTasks(set: Set<ITaskSlice>) {
+export function getAllTasks(userId: string, set: Set<ITaskSlice>) {
+  return onSnapshot(firebaseQuery(tasksColRef, where('userId', '==', userId)), (snapshot) => {
+    const tasks: unknown[] = [];
+    snapshot.docs.forEach((doc) => {
+      tasks.push({
+        ...doc.data(),
+        id: doc.id,
+      });
+    });
+    console.log('getAllTask', { tasks });
+    set(
+      (state) => ({
+        ...state,
+        isLoading: false,
+        tasks: (tasks as ITask[]).sort((a, b) => +new Date(b.date) - +new Date(a.date)),
+      }),
+      true
+    );
+  });
+}
+
+export function getAllInProgress(userId: string, set: Set<ITaskSlice>) {
+  console.log('get all in progress', userId);
   return onSnapshot(
-    queryTasks,
+    firebaseQuery(tasksColRef, where('userId', '==', userId), where('isCompleted', '==', false)),
     (snapshot) => {
       const tasks: unknown[] = [];
       snapshot.docs.forEach((doc) => {
@@ -62,46 +130,22 @@ export function getAllTasks(set: Set<ITaskSlice>) {
         (state) => ({
           ...state,
           isLoading: false,
-          tasks: (tasks as ITask[]).sort((a, b) => +new Date(b.date) - +new Date(a.date)),
+          inProgressTasks:
+            (tasks as ITask[]).sort((a, b) => +new Date(b.date) - +new Date(a.date)) || [],
         }),
         true
       );
     },
     (error) => {
+      console.log('get all in progress error');
       throw new Error(error.message);
     }
   );
 }
 
-export function getAllInProgress(set: Set<ITaskSlice>) {
-  onSnapshot(
-    queryInProgress,
-    (snapshot) => {
-      const tasks: unknown[] = [];
-      snapshot.docs.forEach((doc) => {
-        tasks.push({
-          ...doc.data(),
-          id: doc.id,
-        });
-      });
-      set(
-        (state) => ({
-          ...state,
-          isLoading: false,
-          inProgressTasks: (tasks as ITask[]).sort((a, b) => +new Date(b.date) - +new Date(a.date)),
-        }),
-        true
-      );
-    },
-    (error) => {
-      throw new Error(error.message);
-    }
-  );
-}
-
-export function getAllCompleted(set: Set<ITaskSlice>) {
-  onSnapshot(
-    queryCompleted,
+export function getAllCompleted(userId: string, set: Set<ITaskSlice>) {
+  return onSnapshot(
+    firebaseQuery(tasksColRef, where('userId', '==', userId), where('isCompleted', '==', true)),
     (snapshot) => {
       const tasks: unknown[] = [];
       snapshot.docs.forEach((doc) => {
@@ -120,6 +164,7 @@ export function getAllCompleted(set: Set<ITaskSlice>) {
       );
     },
     (error) => {
+      console.log('get all completed error');
       throw new Error(error.message);
     }
   );
@@ -154,9 +199,9 @@ export async function deleteTask(id: string) {
 
 // ##### CATEGORIES ##### //
 
-export function getAllCategories(set: Set<ICategoriesSlice>) {
-  onSnapshot(
-    queryCategories,
+export function getAllCategories(userId: string, set: Set<ICategoriesSlice>) {
+  return onSnapshot(
+    firebaseQuery(categoriesColRef, where('userId', '==', userId)),
     (snapshot) => {
       const categories: unknown[] = [];
       snapshot.docs.forEach((doc) => {
@@ -177,22 +222,32 @@ export function getAllCategories(set: Set<ICategoriesSlice>) {
       );
     },
     (error) => {
+      console.log('get all categories error');
       throw new Error(error.message);
     }
   );
 }
 
-export async function addCategories({ name }: ICategories) {
+export async function addCategories({ name, userId }: ICategories) {
   const categories: ICategories = {
     name,
+    userId,
     createdAt: new Date().toISOString(),
   };
   await addDoc(categoriesColRef, categories);
 }
 
-export function getAllTasksByCategory(selectedCategoryId: string, set: Set<ITaskSlice>) {
-  onSnapshot(
-    firebaseQuery(tasksColRef, where('categoryId', '==', selectedCategoryId)),
+export function getAllTasksByCategory(
+  userId: string,
+  selectedCategoryId: string,
+  set: Set<ITaskSlice>
+) {
+  return onSnapshot(
+    firebaseQuery(
+      tasksColRef,
+      where('userId', '==', userId),
+      where('categoryId', '==', selectedCategoryId)
+    ),
     (snapshot) => {
       const tasks: unknown[] = [];
       snapshot.docs.forEach((doc) => {
@@ -211,6 +266,7 @@ export function getAllTasksByCategory(selectedCategoryId: string, set: Set<ITask
       );
     },
     (error) => {
+      console.log('get all tasks by categories error');
       throw new Error(error.message);
     }
   );
@@ -227,7 +283,7 @@ export async function deleteCategoryWithTasks(categoryId: string) {
 
   // Query and delete associated tasks
   const tasksQuery = firebaseQuery(tasksColRef, where('categoryId', '==', categoryId));
-  onSnapshot(tasksQuery, (snapshot) => {
+  return onSnapshot(tasksQuery, (snapshot) => {
     snapshot.docs.forEach((taskDoc) => {
       const taskRef = doc(tasksColRef, taskDoc.id);
       deleteDoc(taskRef);

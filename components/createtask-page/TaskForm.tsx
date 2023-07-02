@@ -29,19 +29,20 @@ export default function TaskForm() {
 
   const navigation = useNavigation<CreateTaskNavigationProp>();
 
-  const { categories, addTask, fetchAllCategories, isLoading, error } = useStore(
+  const { categories, addTask, fetchAllCategories, isLoading, error, userInfo } = useStore(
     (state) => ({
       addTask: state.addTaskHandler,
       fetchAllCategories: state.fetchAllCategoriesHandler,
       categories: state.categories,
       isLoading: state.isLoading,
       error: state.error,
+      userInfo: state.userInfo,
     }),
     shallow
   );
 
   useEffect(() => {
-    fetchAllCategories();
+    fetchAllCategories(userInfo?.uid as string);
   }, []);
 
   const pickedCategoriesHandler = ({ name, id }: ICategories) => {
@@ -63,6 +64,7 @@ export default function TaskForm() {
       date: input.date.toISOString(),
       categoryId: input.categoryId,
       categoryName: input.categoryName,
+      userId: userInfo?.uid,
     };
 
     try {

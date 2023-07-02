@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
+import { shallow } from 'zustand/shallow';
 
 import Categories from '../components/home-page/categories/Categories';
 import Header from '../components/home-page/HomeHeader';
@@ -17,13 +18,20 @@ export default function HomePage() {
 
   const navigate = useNavigation<HomeNavigationProp>();
 
-  const fetchAllTask = useStore((state) => state.fetchAllTasksHandler);
+  const { fetchAllTask, userInfo } = useStore(
+    (state) => ({ fetchAllTask: state.fetchAllTasksHandler, userInfo: state.userInfo }),
+    shallow
+  );
 
-  const { refreshing, refreshHandler } = useRefresh(fetchAllTask);
+  console.log('Home Page', { userInfo });
 
-  useEffect(() => {
-    fetchAllTask();
-  }, []);
+  const { refreshing, refreshHandler } = useRefresh(
+    fetchAllTask.bind(null, userInfo?.uid as string)
+  );
+
+  // useEffect(() => {
+  //   fetchAllTask(userInfo?.uid as string);
+  // }, []);
 
   const createNewTaskHandler = () => {
     navigate.navigate('CreateTask');

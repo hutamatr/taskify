@@ -24,10 +24,10 @@ export interface ITaskSlice {
   task: ITask | object;
   isLoading: boolean;
   error: ITaskError;
-  fetchAllTasksHandler: () => void;
-  fetchAllInProgressHandler: () => void;
-  fetchAllCompletedHandler: () => void;
-  fetchAllTasksByCategoryHandler: (categoryId: string) => void;
+  fetchAllTasksHandler: (userId: string) => void;
+  fetchAllInProgressHandler: (userId: string) => void;
+  fetchAllCompletedHandler: (userId: string) => void;
+  fetchAllTasksByCategoryHandler: (userId: string, categoryId: string) => void;
   fetchTaskHandler: (taskId: string) => void;
   addTaskHandler: (task: ITask) => void;
   updateTaskHandler: (task: ITask) => void;
@@ -42,35 +42,36 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
   task: {},
   isLoading: false,
   error: { isError: false, errorMessage: '' },
-  fetchAllTasksHandler: () => {
+  fetchAllTasksHandler: (userId) => {
     try {
       set({
         isLoading: true,
         error: { isError: false, errorMessage: '' },
       });
-      getAllTasks(set);
+      getAllTasks(userId, set);
+    } catch (error) {
+      // console.log('getAllTasks', { error });
+      set({ isLoading: false, error: { isError: true, errorMessage: 'Failed get all task data' } });
+    }
+  },
+  fetchAllInProgressHandler: (userId) => {
+    try {
+      set({
+        isLoading: true,
+        error: { isError: false, errorMessage: '' },
+      });
+      getAllInProgress(userId, set);
     } catch (error) {
       set({ isLoading: false, error: { isError: true, errorMessage: 'Failed get all task data' } });
     }
   },
-  fetchAllInProgressHandler: () => {
+  fetchAllCompletedHandler: (userId) => {
     try {
       set({
         isLoading: true,
         error: { isError: false, errorMessage: '' },
       });
-      getAllInProgress(set);
-    } catch (error) {
-      set({ isLoading: false, error: { isError: true, errorMessage: 'Failed get all task data' } });
-    }
-  },
-  fetchAllCompletedHandler: () => {
-    try {
-      set({
-        isLoading: true,
-        error: { isError: false, errorMessage: '' },
-      });
-      getAllCompleted(set);
+      getAllCompleted(userId, set);
     } catch (error) {
       set({
         isLoading: false,
@@ -78,13 +79,13 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
       });
     }
   },
-  fetchAllTasksByCategoryHandler: (categoryId) => {
+  fetchAllTasksByCategoryHandler: (userId, categoryId) => {
     try {
       set({
         isLoading: true,
         error: { isError: false, errorMessage: '' },
       });
-      getAllTasksByCategory(categoryId, set);
+      getAllTasksByCategory(userId, categoryId, set);
     } catch (error) {
       set({ isLoading: false, error: { isError: true, errorMessage: 'Failed get task data' } });
     }

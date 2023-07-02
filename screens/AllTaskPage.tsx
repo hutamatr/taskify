@@ -16,18 +16,21 @@ export default function AllTaskPage() {
   const navigation = useNavigation<TasksNavigationProp>();
   const [isCompletedView, setIsCompletedView] = useState(false);
 
-  const { fetchInProgress, fetchCompleted, inProgressTasks, completedTasks } = useStore(
+  const { fetchInProgress, fetchCompleted, inProgressTasks, completedTasks, userInfo } = useStore(
     (state) => ({
       fetchInProgress: state.fetchAllInProgressHandler,
       fetchCompleted: state.fetchAllCompletedHandler,
       inProgressTasks: state.inProgressTasks,
       completedTasks: state.completedTasks,
+      userInfo: state.userInfo,
     }),
     shallow
   );
 
   useEffect(() => {
-    fetchInProgress();
+    if (userInfo) {
+      fetchInProgress(userInfo.uid);
+    }
   }, []);
 
   const createNewTaskHandler = () => {
@@ -35,12 +38,12 @@ export default function AllTaskPage() {
   };
 
   const inProgressFilterHandler = () => {
-    fetchInProgress();
+    fetchInProgress(userInfo?.uid as string);
     setIsCompletedView(false);
   };
 
   const completedFilterHandler = () => {
-    fetchCompleted();
+    fetchCompleted(userInfo?.uid as string);
     setIsCompletedView(true);
   };
 

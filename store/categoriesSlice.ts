@@ -12,7 +12,7 @@ export interface ICategoriesSlice {
   categories: ICategories[];
   isLoading: boolean;
   error: { isError: boolean; errorMessage: string };
-  fetchAllCategoriesHandler: () => void;
+  fetchAllCategoriesHandler: (userId: string) => void;
   addCategoryHandler: (category: ICategories) => void;
   deleteCategoryHandler: (categoryId: string, isDeleteWithTasks: boolean) => void;
 }
@@ -21,13 +21,13 @@ export const categoriesSlice: StateCreator<ICategoriesSlice, [], [], ICategories
   categories: [],
   isLoading: false,
   error: { isError: false, errorMessage: '' },
-  fetchAllCategoriesHandler: () => {
+  fetchAllCategoriesHandler: (userId) => {
     try {
       set({
         isLoading: true,
         error: { isError: false, errorMessage: '' },
       });
-      getAllCategories(set);
+      getAllCategories(userId, set);
     } catch (error) {
       set({
         isLoading: false,

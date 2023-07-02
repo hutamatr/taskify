@@ -18,10 +18,15 @@ export default function CategoriesPage() {
 
   const { handleScroll, showButton } = useHandleScroll();
 
-  const fetchAllCategories = useStore((state) => state.fetchAllCategoriesHandler);
+  const { fetchAllCategories, userInfo } = useStore((state) => ({
+    fetchAllCategories: state.fetchAllCategoriesHandler,
+    userInfo: state.userInfo,
+  }));
+
+  console.log('Categories Page', { userInfo });
 
   useEffect(() => {
-    fetchAllCategories();
+    fetchAllCategories(userInfo?.uid as string);
   }, []);
 
   return (
