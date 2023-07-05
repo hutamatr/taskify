@@ -1,16 +1,28 @@
 import BottomSheet from '@gorhom/bottom-sheet';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCollection } from '@skillnation/react-native-firebase-hooks/firestore';
+import { useCallback, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
 
+import { queryCategories } from '../api/api';
 import CategoriesHeader from '../components/categories-page/CategoriesHeader';
 import CategoriesList from '../components/categories-page/CategoriesList';
 import CategoriesForm from '../components/createcategories-page/CategoriesForm';
+import useFormatData from '../hooks/useFormatData';
 import useHandleScroll from '../hooks/useHandleScroll';
 import { useStore } from '../store/useStore';
+import { ICategories } from '../types/types';
 
 export default function CategoriesPage() {
   const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const userInfo = useStore((state) => state.userInfo);
+
+  const [categories, categoriesIsLoading, categoriesError] = useCollection(
+    queryCategories(userInfo?.uid as string)
+  );
+
+  const categoriesData = useFormatData<ICategories[]>(categories);
 
   const createNewCategoriesHandler = useCallback((index: number) => {
     bottomSheetRef.current?.snapToIndex(index);
@@ -18,21 +30,15 @@ export default function CategoriesPage() {
 
   const { handleScroll, showButton } = useHandleScroll();
 
-  const { fetchAllCategories, userInfo } = useStore((state) => ({
-    fetchAllCategories: state.fetchAllCategoriesHandler,
-    userInfo: state.userInfo,
-  }));
-
-  console.log('Categories Page', { userInfo });
-
-  useEffect(() => {
-    fetchAllCategories(userInfo?.uid as string);
-  }, []);
-
   return (
     <View style={styles.container}>
       <CategoriesHeader />
-      <CategoriesList onScroll={handleScroll} />
+      <CategoriesList
+        onScroll={handleScroll}
+        categories={categoriesData}
+        isLoading={categoriesIsLoading}
+        error={categoriesError}
+      />
       <CategoriesForm bottomSheetRef={bottomSheetRef} />
       <AnimatedFAB
         icon="plus"
