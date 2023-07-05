@@ -4,12 +4,13 @@ import { Avatar } from 'react-native-paper';
 
 import Header from '../ui/Header';
 import Text from '../ui/Text';
+import { useStore } from '../../store/useStore';
 import { getLabelByUsername } from '../../utils/usernameLabel';
 
-const username = 'hutama trirahmanto';
-
 export default function HomeHeader() {
-  const [label] = useState(getLabelByUsername(username));
+  const userInfo = useStore((state) => state.userInfo);
+
+  const [label] = useState(getLabelByUsername(userInfo?.displayName as string));
 
   return (
     <Header style={styles.headerContainer}>
@@ -18,7 +19,7 @@ export default function HomeHeader() {
           Hello,
         </Text>
         <Text variant="headlineMedium" numberOfLines={1} lineBreakMode="tail" fontType="medium">
-          {username}
+          {userInfo?.displayName}
         </Text>
       </View>
       <View style={styles.avatarContainer}>
