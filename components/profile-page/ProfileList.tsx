@@ -1,9 +1,24 @@
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
+import { shallow } from 'zustand/shallow';
 
 import Text from '../ui/Text';
+import { useStore } from '../../store/useStore';
 
 export default function ProfileList() {
+  const { signOut, isLoading, userInfo } = useStore(
+    (state) => ({
+      signOut: state.SignOutHandler,
+      isLoading: state.authLoading,
+      userInfo: state.userInfo,
+    }),
+    shallow
+  );
+
+  const signOutHandler = () => {
+    signOut();
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
@@ -11,7 +26,7 @@ export default function ProfileList() {
           Name
         </Text>
         <Text fontType="medium" variant="bodyLarge">
-          Hutama Trirahmanto
+          {userInfo?.displayName}
         </Text>
       </View>
       <View style={styles.profileContainer}>
@@ -19,10 +34,10 @@ export default function ProfileList() {
           Email
         </Text>
         <Text fontType="medium" variant="bodyLarge">
-          hutamatr@gmail.com
+          {userInfo?.email}
         </Text>
       </View>
-      <Button mode="outlined" style={styles.button}>
+      <Button mode="outlined" style={styles.button} onPress={signOutHandler} loading={isLoading}>
         <Text fontType="semibold" variant="titleMedium">
           Sign Out
         </Text>
@@ -45,5 +60,10 @@ const styles = StyleSheet.create({
     width: '100%',
     position: 'absolute',
     bottom: 0,
+  },
+  error: {
+    textAlign: 'center',
+    margin: 24,
+    color: 'red',
   },
 });

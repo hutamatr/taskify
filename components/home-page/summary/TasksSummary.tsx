@@ -1,21 +1,23 @@
+import { useCollection } from '@skillnation/react-native-firebase-hooks/firestore';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { shallow } from 'zustand/shallow';
 
 import SummaryCard from './SummaryCard';
 import Loading from '../../ui/Loading';
 import Text from '../../ui/Text';
+import { queryTasks } from '../../../api/api';
+import useFormatData from '../../../hooks/useFormatData';
 import { useStore } from '../../../store/useStore';
+import { ITask } from '../../../types/types';
 
 export default function TasksSummary() {
   const theme = useTheme();
-  const { tasks, isLoading } = useStore(
-    (state) => ({
-      tasks: state.tasks,
-      isLoading: state.isLoading,
-    }),
-    shallow
-  );
+
+  const userInfo = useStore((state) => state.userInfo);
+
+  const [tasks, loading, error] = useCollection(queryTasks(userInfo?.uid as string));
+
+  const tasksData = useFormatData<ITask[]>(tasks);
 
   return (
     <View style={styles.summaryContainer}>
@@ -23,8 +25,8 @@ export default function TasksSummary() {
         <Text variant="displayMedium" numberOfLines={2} lineBreakMode="tail" fontType="medium">
           your have
         </Text>
-        {isLoading && <Loading size="large" />}
-        {!isLoading && (
+        {loading && <Loading size="large" />}
+        {!loading && (
           <Text
             variant="displayLarge"
             numberOfLines={2}
@@ -32,7 +34,7 @@ export default function TasksSummary() {
             fontType="semibold"
             style={{ color: theme.colors.primary }}
           >
-            {tasks.length > 99 ? '99+' : tasks.length.toString()}
+            {tasksData.length > 99 ? '99+' : tasksData.length.toString()}
           </Text>
         )}
 
@@ -40,7 +42,7 @@ export default function TasksSummary() {
           tasks today
         </Text>
       </View>
-      <SummaryCard />
+      <SummaryCard tasks={tasksData} isLoading={loading} error={error} />
     </View>
   );
 }

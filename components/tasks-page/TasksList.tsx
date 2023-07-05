@@ -2,48 +2,42 @@ import {
   FlatList,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
+  StyleProp,
   StyleSheet,
   View,
+  ViewStyle,
 } from 'react-native';
-import { shallow } from 'zustand/shallow';
 
 import TaskItem from './TasksItem';
 import Loading from '../ui/Loading';
 import Text from '../ui/Text';
-import { useStore } from '../../store/useStore';
 import type { ITask } from '../../types/types';
 
 interface ITaskListProps {
   onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   tasks: ITask[];
+  isLoading: boolean;
+  error: Error | undefined;
+  style?: StyleProp<ViewStyle>;
 }
 
-export default function TasksList({ onScroll, tasks }: ITaskListProps) {
-  const { isLoading, error } = useStore(
-    (state) => ({
-      isLoading: state.isLoading,
-      error: state.error,
-      fetchAllTask: state.fetchAllTasksHandler,
-    }),
-    shallow
-  );
-
+export default function TasksList({ onScroll, tasks, isLoading, error, style }: ITaskListProps) {
   return (
-    <View style={styles.listContainer}>
+    <View style={[styles.listContainer, style]}>
       {isLoading && <Loading size="large" />}
-      {error?.isError && (
+      {error && (
         <Text fontType="medium" style={styles.error} variant="headlineSmall">
-          {error.errorMessage}
+          Failed view tasks list!
         </Text>
       )}
-      {!isLoading && !error.isError && tasks.length === 0 && (
+      {!isLoading && !error && tasks.length === 0 && (
         <View style={styles.taskEmptyContainer}>
           <Text fontType="medium" variant="headlineSmall">
             Task Empty
           </Text>
         </View>
       )}
-      {!isLoading && !error.isError && tasks.length > 0 && (
+      {!isLoading && !error && tasks.length > 0 && (
         <FlatList
           data={tasks}
           renderItem={({ item }) => <TaskItem {...item} />}
@@ -60,7 +54,6 @@ export default function TasksList({ onScroll, tasks }: ITaskListProps) {
 const styles = StyleSheet.create({
   listContainer: {
     marginHorizontal: 16,
-    marginBottom: 150,
     justifyContent: 'center',
     alignItems: 'center',
   },

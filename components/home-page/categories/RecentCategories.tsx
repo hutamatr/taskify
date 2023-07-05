@@ -1,13 +1,21 @@
 import { useNavigation } from '@react-navigation/native';
+import { useCollection } from '@skillnation/react-native-firebase-hooks/firestore';
 import { Dimensions, StyleSheet, View } from 'react-native';
 
 import CategoriesItem from '../../categories-page/CategoriesItem';
+import Loading from '../../ui/Loading';
 import Text from '../../ui/Text';
+import { queryCategories } from '../../../api/api';
+import useFormatData from '../../../hooks/useFormatData';
 import { useStore } from '../../../store/useStore';
 import type { HomeNavigationProp, ICategories } from '../../../types/types';
 
 export default function RecentCategories() {
-  const categories = useStore((state) => state.categories);
+  const userInfo = useStore((state) => state.userInfo);
+
+  const [categories, loading, _error] = useCollection(queryCategories(userInfo?.uid as string));
+
+  const categoriesData = useFormatData<ICategories[]>(categories);
 
   const navigation = useNavigation<HomeNavigationProp>();
 
@@ -17,18 +25,30 @@ export default function RecentCategories() {
 
   return (
     <View style={styles.container}>
-      {categories.length === 0 ? (
+      {loading && <Loading size="large" />}
+      {categoriesData?.length === 0 && (
         <View style={styles.categoriesEmptyContainer}>
           <Text style={styles.categoriesEmptyText} fontType="medium">
             Category Empty
           </Text>
         </View>
-      ) : (
+      )}
+      {categoriesData.length > 0 && (
         <View style={styles.recentCategoriesContainer}>
-          {categories.slice(0, 2).map((category) => {
+          {categoriesData.slice(0, 2).map((category) => {
+            if (!category.name) {
+              return (
+                <CategoriesItem
+                  key={category.name + category.id}
+                  style={[styles.categoriesItem, { backgroundColor: 'transparent' }]}
+                  mode={undefined}
+                  name=""
+                />
+              );
+            }
             return (
               <CategoriesItem
-                key={category.id as string}
+                key={category.id}
                 name={category.name}
                 style={styles.categoriesItem}
                 textVariant="titleMedium"

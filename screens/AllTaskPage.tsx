@@ -1,46 +1,44 @@
 import { useNavigation } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
+import { useCollection } from '@skillnation/react-native-firebase-hooks/firestore';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
-import { shallow } from 'zustand/shallow';
 
+import { queryTasksCompleted, queryTasksInProgress } from '../api/api';
 import TasksFilter from '../components/tasks-page/TasksFilter';
 import TasksHeader from '../components/tasks-page/TasksHeader';
 import TasksList from '../components/tasks-page/TasksList';
+import useFormatData from '../hooks/useFormatData';
 import useHandleScroll from '../hooks/useHandleScroll';
 import { useStore } from '../store/useStore';
-import type { TasksNavigationProp } from '../types/types';
+import type { ITask, TasksNavigationProp } from '../types/types';
 
 export default function AllTaskPage() {
   const { handleScroll, showButton } = useHandleScroll();
   const navigation = useNavigation<TasksNavigationProp>();
   const [isCompletedView, setIsCompletedView] = useState(false);
 
-  const { fetchInProgress, fetchCompleted, inProgressTasks, completedTasks } = useStore(
-    (state) => ({
-      fetchInProgress: state.fetchAllInProgressHandler,
-      fetchCompleted: state.fetchAllCompletedHandler,
-      inProgressTasks: state.inProgressTasks,
-      completedTasks: state.completedTasks,
-    }),
-    shallow
+  const userInfo = useStore((state) => state.userInfo);
+
+  const [tasksCompleted, completedIsLoading, completedError] = useCollection(
+    queryTasksCompleted(userInfo?.uid as string)
+  );
+  const [tasksInProgress, progressIsLoading, progressError] = useCollection(
+    queryTasksInProgress(userInfo?.uid as string)
   );
 
-  useEffect(() => {
-    fetchInProgress();
-  }, []);
+  const tasksCompletedData = useFormatData<ITask[]>(tasksCompleted);
+  const tasksInProgressData = useFormatData<ITask[]>(tasksInProgress);
 
   const createNewTaskHandler = () => {
     navigation.navigate('CreateTask');
   };
 
   const inProgressFilterHandler = () => {
-    fetchInProgress();
     setIsCompletedView(false);
   };
 
   const completedFilterHandler = () => {
-    fetchCompleted();
     setIsCompletedView(true);
   };
 
@@ -54,7 +52,10 @@ export default function AllTaskPage() {
       />
       <TasksList
         onScroll={handleScroll}
-        tasks={isCompletedView ? completedTasks : inProgressTasks}
+        tasks={isCompletedView ? tasksCompletedData : tasksInProgressData}
+        isLoading={isCompletedView ? completedIsLoading : progressIsLoading}
+        error={isCompletedView ? completedError : progressError}
+        style={{ marginBottom: 150 }}
       />
       <AnimatedFAB
         icon="plus"

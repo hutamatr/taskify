@@ -2,6 +2,7 @@ import BottomSheet, { useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
+import { shallow } from 'zustand/shallow';
 
 import Text from '../ui/Text';
 import useInputState from '../../hooks/useInputState';
@@ -13,7 +14,13 @@ interface ICategoriesForm {
 
 export default function CategoriesForm({ bottomSheetRef }: ICategoriesForm) {
   const { input, onChangeInputHandler, setInput } = useInputState({ inputState: { title: '' } });
-  const addCategory = useStore((state) => state.addCategoryHandler);
+  const { addCategory, userInfo } = useStore(
+    (state) => ({
+      addCategory: state.addCategoryHandler,
+      userInfo: state.userInfo,
+    }),
+    shallow
+  );
 
   const snapPoints = useMemo(() => ['25'], []);
   const animationConfigs = useBottomSheetSpringConfigs({
@@ -36,6 +43,7 @@ export default function CategoriesForm({ bottomSheetRef }: ICategoriesForm) {
 
     const newCategory = {
       name: input.title,
+      userId: userInfo?.uid,
     };
 
     try {

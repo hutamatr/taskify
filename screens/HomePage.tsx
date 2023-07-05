@@ -1,32 +1,28 @@
 import { useNavigation } from '@react-navigation/native';
-import { useEffect } from 'react';
+import { useCollectionOnce } from '@skillnation/react-native-firebase-hooks/firestore';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
 
+import { tasksColRef } from '../api/api';
 import Categories from '../components/home-page/categories/Categories';
 import Header from '../components/home-page/HomeHeader';
 import TasksSummary from '../components/home-page/summary/TasksSummary';
 import Tasks from '../components/home-page/tasks/Tasks';
 import useHandleScroll from '../hooks/useHandleScroll';
 import useRefresh from '../hooks/useRefresh';
-import { useStore } from '../store/useStore';
 import type { HomeNavigationProp } from '../types/types';
 
 export default function HomePage() {
   const { handleScroll, showButton } = useHandleScroll();
 
-  const navigate = useNavigation<HomeNavigationProp>();
+  const navigation = useNavigation<HomeNavigationProp>();
 
-  const fetchAllTask = useStore((state) => state.fetchAllTasksHandler);
+  const [_tasks, _tasksLoading, _tasksError, reload] = useCollectionOnce(tasksColRef);
 
-  const { refreshing, refreshHandler } = useRefresh(fetchAllTask);
-
-  useEffect(() => {
-    fetchAllTask();
-  }, []);
+  const { refreshing, refreshHandler } = useRefresh(reload);
 
   const createNewTaskHandler = () => {
-    navigate.navigate('CreateTask');
+    navigation.navigate('CreateTask');
   };
 
   return (

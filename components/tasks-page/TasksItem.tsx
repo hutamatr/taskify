@@ -2,7 +2,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Alert, GestureResponderEvent, StyleSheet, View } from 'react-native';
 import { Card, Menu, useTheme } from 'react-native-paper';
-import { shallow } from 'zustand/shallow';
 
 import Text from '../ui/Text';
 import { useStore } from '../../store/useStore';
@@ -19,10 +18,7 @@ export default function TasksItem({
   const [visible, setVisible] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
 
-  const { deleteTask } = useStore(
-    (state) => ({ deleteTask: state.deleteTaskHandler, editTask: state.updateTaskHandler }),
-    shallow
-  );
+  const deleteTask = useStore((state) => state.deleteTaskHandler);
 
   const theme = useTheme();
 
