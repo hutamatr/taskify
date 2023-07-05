@@ -16,17 +16,6 @@ export const useStore = create<IAuthSlice & ITaskSlice & ICategoriesSlice>()(
     {
       name: 'tasks-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (state) =>
-        Object.fromEntries(
-          Object.entries(state).filter(([key]) => [
-            !['isAuth'].includes(key),
-            !['accessToken'].includes(key),
-            !['signUpHandler'].includes(key),
-            !['signInHandler'].includes(key),
-            !['SignOutHandler'].includes(key),
-            !['retrieveStorage'].includes(key),
-          ])
-        ),
     }
   )
 );
