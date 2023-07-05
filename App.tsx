@@ -5,16 +5,14 @@ import {
   PlusJakartaSans_700Bold,
   useFonts,
 } from '@expo-google-fonts/plus-jakarta-sans';
+import auth from '@react-native-firebase/auth';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
-import { onAuthStateChanged } from 'firebase/auth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
-import { shallow } from 'zustand/shallow';
 import 'expo-dev-client';
 
-import { auth } from './api/api';
 import Text from './components/ui/Text';
 import HomeTabsNavigation from './navigation/HomeTabsNavigation';
 import CategoriesDetailPage from './screens/CategoriesDetailPage';
@@ -43,32 +41,28 @@ const theme = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const [initializing, setInitializing] = useState(true);
+  const [isAuth, setIsAuth] = useState<boolean>(false);
+
   const [fontsLoaded] = useFonts(customFonts);
-  const { isAuth, retrieveAuthState, fetchAllTask, userInfo } = useStore(
-    (state) => ({
-      isAuth: state.isAuth,
-      fetchAllTask: state.fetchAllTasksHandler,
-      retrieveAuthState: state.retrieveAuthStateHandler,
-      userInfo: state.userInfo,
-    }),
-    shallow
-  );
+  const authHandler = useStore((state) => state.authHandler);
 
   useEffect(() => {
-    onAuthStateChanged(auth, async (user) => {
-      await user?.reload();
-      console.log({ user });
-      if (user?.uid) {
-        console.log('app', { user });
-        retrieveAuthState(user);
-        fetchAllTask(user.uid);
+    const subscriber = auth().onAuthStateChanged((user) => {
+      if (user) {
+        setIsAuth(!!user.uid);
+        authHandler(user);
       } else {
-        retrieveAuthState(null);
+        setIsAuth(false);
+      }
+      if (initializing) {
+        setInitializing(false);
       }
     });
+    return () => subscriber(); // unsubscribe on unmount
   }, []);
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || initializing) {
     return null;
   }
 
