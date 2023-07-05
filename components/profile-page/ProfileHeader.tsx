@@ -4,19 +4,27 @@ import { Avatar } from 'react-native-paper';
 
 import Header from '../ui/Header';
 import Text from '../ui/Text';
+import { useStore } from '../../store/useStore';
 import { getLabelByUsername } from '../../utils/usernameLabel';
 
-const username = 'Hutama Trirahmanto';
-
 export default function ProfileHeader() {
-  const [label] = useState(getLabelByUsername(username));
+  const userInfo = useStore((state) => state.userInfo);
+
+  const [label] = useState(getLabelByUsername(userInfo?.displayName as string));
 
   return (
     <Header style={styles.headerContainer}>
       <View style={styles.textProfileContainer}>
-        <Avatar.Text size={100} label={label?.firstLetter + label?.firstLetterAfterSpace} />
+        <Avatar.Text
+          size={100}
+          label={
+            label.firstLetterAfterSpace
+              ? label.firstLetter + label.firstLetterAfterSpace
+              : label.firstLetter
+          }
+        />
         <Text variant="headlineSmall" numberOfLines={1} lineBreakMode="tail" fontType="semibold">
-          {username}
+          {userInfo?.displayName}
         </Text>
       </View>
     </Header>
