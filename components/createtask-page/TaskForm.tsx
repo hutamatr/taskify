@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import { Button, TextInput } from 'react-native-paper';
@@ -15,7 +15,13 @@ import { formatData } from '../../utils/formatDataList';
 
 const numColumns = 2;
 
-export default function TaskForm() {
+interface ITaskFormProps {
+  categories: ICategories[];
+  isLoading: boolean;
+  error: Error | undefined;
+}
+
+export default function TaskForm({ categories, isLoading, error }: ITaskFormProps) {
   const [open, setOpen] = useState(false);
   const { input, onChangeInputHandler, setInput } = useInputState<{
     title: string;
@@ -29,21 +35,13 @@ export default function TaskForm() {
 
   const navigation = useNavigation<CreateTaskNavigationProp>();
 
-  const { categories, addTask, fetchAllCategories, isLoading, error, userInfo } = useStore(
+  const { addTask, userInfo } = useStore(
     (state) => ({
       addTask: state.addTaskHandler,
-      fetchAllCategories: state.fetchAllCategoriesHandler,
-      categories: state.categories,
-      isLoading: state.isLoading,
-      error: state.error,
       userInfo: state.userInfo,
     }),
     shallow
   );
-
-  useEffect(() => {
-    fetchAllCategories(userInfo?.uid as string);
-  }, []);
 
   const pickedCategoriesHandler = ({ name, id }: ICategories) => {
     setInput((prevState) => ({ ...prevState, categoryId: id as string, categoryName: name }));
@@ -119,19 +117,19 @@ export default function TaskForm() {
           <Text fontType="medium" variant="titleLarge">
             Pick Category
           </Text>
-          {categories.length > 0 && (
+          {categories && categories.length > 0 && (
             <Button icon="plus" onPress={addNewCategoryHandler}>
               Add Category
             </Button>
           )}
         </View>
         {isLoading && <Loading size="large" />}
-        {error?.isError && (
+        {error && (
           <Text fontType="medium" style={styles.error} variant="headlineSmall">
-            {error.errorMessage}
+            {error.message}
           </Text>
         )}
-        {!isLoading && !error.isError && categories.length === 0 && (
+        {!isLoading && !error && categories?.length === 0 && (
           <View style={styles.categoriesEmptyContainer}>
             <Text fontType="medium" variant="headlineSmall">
               Categories Empty
@@ -141,7 +139,7 @@ export default function TaskForm() {
             </Button>
           </View>
         )}
-        {!isLoading && !error.isError && categories.length > 0 && (
+        {!isLoading && !error && categories && categories.length > 0 && (
           <FlatList
             data={formatData(categories, numColumns)}
             renderItem={({ item }) => {
