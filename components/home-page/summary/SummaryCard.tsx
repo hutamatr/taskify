@@ -1,27 +1,24 @@
 import { useMemo } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { Card } from 'react-native-paper';
-import { shallow } from 'zustand/shallow';
 
 import Loading from '../../ui/Loading';
 import Text from '../../ui/Text';
-import { useStore } from '../../../store/useStore';
+import type { ITask } from '../../../types/types';
 
-export default function SummaryCard() {
-  const { tasks, isLoading } = useStore(
-    (state) => ({
-      tasks: state.tasks,
-      isLoading: state.isLoading,
-    }),
-    shallow
-  );
+interface ISummaryCardProps {
+  tasks: ITask[];
+  isLoading: boolean;
+  error: Error | undefined;
+}
 
+export default function SummaryCard({ tasks, isLoading }: ISummaryCardProps) {
   const totalInProgress = useMemo(() => {
-    return tasks.filter((task) => task.isCompleted === false).length;
+    return tasks?.filter((task) => task.isCompleted === false).length;
   }, [tasks]);
 
   const totalDone = useMemo(() => {
-    return tasks.filter((task) => task.isCompleted === true).length;
+    return tasks?.filter((task) => task.isCompleted === true).length;
   }, [tasks]);
 
   return (
@@ -42,7 +39,7 @@ export default function SummaryCard() {
           <>
             <Card.Content style={styles.cardContent}>
               <Text variant="displayMedium" fontType="regular">
-                {totalInProgress > 99 ? '99+' : totalInProgress.toString()}
+                {totalInProgress > 99 ? '99+' : totalInProgress?.toString()}
               </Text>
               <Text variant="titleMedium" fontType="semibold">
                 {totalInProgress > 1 ? 'tasks' : 'task'} in progress
@@ -69,7 +66,7 @@ export default function SummaryCard() {
           {!isLoading && (
             <Card.Content style={styles.cardContent}>
               <Text variant="displayMedium" fontType="regular">
-                {totalDone > 99 ? '99+' : totalDone.toString()}
+                {totalDone > 99 ? '99+' : totalDone?.toString()}
               </Text>
               <Text variant="titleMedium" fontType="semibold">
                 {totalDone > 1 ? 'tasks' : 'task'} done
