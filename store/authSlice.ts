@@ -1,97 +1,37 @@
-import { FirebaseError } from 'firebase/app';
-import { User } from 'firebase/auth';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import type { StateCreator } from 'zustand';
 
-import { logOut, signIn, signUp } from '../api/api';
-import type { IAuth, IUserInfo } from '../types/types';
-
 export interface IAuthSlice {
-  isAuth: boolean;
-  userInfo: IUserInfo | null;
-  isLoading: boolean;
-  error: { isError: boolean; errorMessage: string };
-  signUpHandler: (newUser: IAuth) => void;
-  signInHandler: (user: IAuth) => void;
+  userInfo: FirebaseAuthTypes.User | null;
+  authLoading: boolean;
+  authError: Error | undefined;
+  authHandler: (user: FirebaseAuthTypes.User | null) => void;
   SignOutHandler: () => void;
-  retrieveAuthStateHandler: (user: User | null) => void;
 }
 
 export const authSlice: StateCreator<IAuthSlice, [], [], IAuthSlice> = (set) => ({
-  isAuth: false,
-  isLoading: false,
+  authLoading: false,
   userInfo: null,
-  error: { isError: false, errorMessage: '' },
-  signUpHandler: async (newUser) => {
-    try {
-      set({
-        isLoading: false,
-        error: { isError: false, errorMessage: '' },
-      });
-      await signUp(newUser, set);
-    } catch (error) {
-      if (error instanceof FirebaseError) {
-        switch (error.code) {
-          case 'auth/email-already-in-use':
-            set({
-              isLoading: false,
-              error: { isError: true, errorMessage: 'Email address already in use' },
-            });
-            break;
-        }
-      } else {
-        set({
-          isLoading: false,
-          error: { isError: true, errorMessage: 'Failed sign up new user' },
-        });
-      }
-    }
-  },
-  signInHandler: (user) => {
-    try {
-      set({
-        isLoading: false,
-        error: { isError: false, errorMessage: '' },
-      });
-      signIn(user, set);
-    } catch (error) {
-      if (error instanceof FirebaseError) {
-        switch (error.code) {
-          case 'auth/user-not-found':
-            set({
-              isLoading: false,
-              error: { isError: true, errorMessage: 'User not found' },
-            });
-            break;
-        }
-      } else {
-        set({
-          isLoading: false,
-          error: { isError: true, errorMessage: 'Failed sign in' },
-        });
-      }
-    }
+  authError: undefined,
+  authHandler: (user) => {
+    set((state) => ({ ...state, userInfo: user }), true);
   },
   SignOutHandler: async () => {
     try {
       set({
-        isLoading: false,
-        error: { isError: false, errorMessage: '' },
+        authLoading: true,
+        authError: undefined,
       });
-      await logOut(set);
+      await auth().signOut();
     } catch (error) {
-      if (error instanceof FirebaseError) {
+      if (error instanceof Error) {
         set({
-          isLoading: false,
-          error: { isError: true, errorMessage: 'Failed sign out' },
+          authLoading: false,
+          authError: error,
         });
       }
-    }
-  },
-  retrieveAuthStateHandler: (user) => {
-    if (user) {
-      set({ isAuth: Boolean(user.uid), userInfo: { email: user.email as string, uid: user.uid } });
-    } else {
-      set({ isAuth: false, userInfo: null });
+    } finally {
+      set({ authLoading: false });
     }
   },
 });
