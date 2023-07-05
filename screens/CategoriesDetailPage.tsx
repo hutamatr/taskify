@@ -1,34 +1,41 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useCollectionOnce } from '@skillnation/react-native-firebase-hooks/firestore';
+import { useLayoutEffect, useState } from 'react';
 import { Alert, GestureResponderEvent, StyleSheet, View } from 'react-native';
 import { Menu } from 'react-native-paper';
 import { shallow } from 'zustand/shallow';
 
+import { queryTasksByCategory } from '../api/api';
 import TasksList from '../components/tasks-page/TasksList';
 import Text from '../components/ui/Text';
+import useFormatData from '../hooks/useFormatData';
 import { useStore } from '../store/useStore';
 import type {
   CategoriesDetailNavigationProp,
   CategoriesDetailScreenRouteProp,
+  ITask,
 } from '../types/types';
 
 export default function CategoriesDetailPage() {
   const [visible, setVisible] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
-
   const route = useRoute<CategoriesDetailScreenRouteProp>();
   const navigation = useNavigation<CategoriesDetailNavigationProp>();
 
-  const { fetchAllTasksByCategory, deleteCategory, tasksByCategory, userInfo } = useStore(
+  const { userInfo, deleteCategory } = useStore(
     (state) => ({
-      fetchAllTasksByCategory: state.fetchAllTasksByCategoryHandler,
-      deleteCategory: state.deleteCategoryHandler,
-      tasksByCategory: state.tasksByCategory,
       userInfo: state.userInfo,
+      deleteCategory: state.deleteCategoryHandler,
     }),
     shallow
   );
+
+  const [taskByCategory, taskByCategoryLoading, taskByCategoryError] = useCollectionOnce(
+    queryTasksByCategory(userInfo?.uid as string, route.params.id as string)
+  );
+
+  const taskByCategoryData = useFormatData<ITask[]>(taskByCategory);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -48,10 +55,6 @@ export default function CategoriesDetailPage() {
     });
   }, [navigation, route]);
 
-  useEffect(() => {
-    fetchAllTasksByCategory(userInfo?.uid as string, route.params.id as string);
-  }, [route]);
-
   const openMenu = () => setVisible(true);
 
   const closeMenu = () => setVisible(false);
@@ -68,13 +71,13 @@ export default function CategoriesDetailPage() {
   };
 
   const deleteCategoryHandler = () => {
-    if (tasksByCategory.length === 0) {
+    if (taskByCategoryData.length === 0) {
       Alert.alert('Confirm Delete', 'Are you sure you want to delete this category?', [
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Delete',
           onPress: () => {
-            deleteCategory(route.params.id as string, false);
+            deleteCategory(route.params.id as string, false, userInfo?.uid as string);
           },
           style: 'default',
         },
@@ -88,14 +91,14 @@ export default function CategoriesDetailPage() {
           {
             text: 'Category only',
             onPress: () => {
-              deleteCategory(route.params.id as string, false);
+              deleteCategory(route.params.id as string, false, userInfo?.uid as string);
             },
             style: 'cancel',
           },
           {
             text: 'Delete all',
             onPress: () => {
-              deleteCategory(route.params.id as string, true);
+              deleteCategory(route.params.id as string, true, userInfo?.uid as string);
             },
             style: 'default',
           },
@@ -107,7 +110,11 @@ export default function CategoriesDetailPage() {
 
   return (
     <View style={styles.container}>
-      <TasksList tasks={tasksByCategory} />
+      <TasksList
+        tasks={taskByCategoryData}
+        isLoading={taskByCategoryLoading}
+        error={taskByCategoryError}
+      />
       <Menu visible={visible} onDismiss={closeMenu} anchor={menuAnchor}>
         <Menu.Item onPress={deleteCategoryHandler} title="Delete" leadingIcon="delete" />
       </Menu>
