@@ -1,70 +1,56 @@
 import type { StateCreator } from 'zustand';
 
-import {
-  addCategories,
-  deleteCategory,
-  deleteCategoryWithTasks,
-  getAllCategories,
-} from '../api/api';
+import { addCategories, deleteCategory, deleteCategoryWithTasks } from '../api/api';
 import type { ICategories } from '../types/types';
 
 export interface ICategoriesSlice {
-  categories: ICategories[];
-  isLoading: boolean;
-  error: { isError: boolean; errorMessage: string };
-  fetchAllCategoriesHandler: (userId: string) => void;
+  categoriesLoading: boolean;
+  categoriesError: Error | undefined;
   addCategoryHandler: (category: ICategories) => void;
-  deleteCategoryHandler: (categoryId: string, isDeleteWithTasks: boolean) => void;
+  deleteCategoryHandler: (categoryId: string, isDeleteWithTasks: boolean, userId: string) => void;
 }
 
 export const categoriesSlice: StateCreator<ICategoriesSlice, [], [], ICategoriesSlice> = (set) => ({
-  categories: [],
-  isLoading: false,
-  error: { isError: false, errorMessage: '' },
-  fetchAllCategoriesHandler: (userId) => {
-    try {
-      set({
-        isLoading: true,
-        error: { isError: false, errorMessage: '' },
-      });
-      getAllCategories(userId, set);
-    } catch (error) {
-      set({
-        isLoading: false,
-        error: { isError: true, errorMessage: 'Failed get all categories data' },
-      });
-    }
-  },
+  categoriesLoading: false,
+  categoriesError: undefined,
   addCategoryHandler: async (category) => {
     try {
       set({
-        isLoading: true,
-        error: { isError: false, errorMessage: '' },
+        categoriesLoading: true,
+        categoriesError: undefined,
       });
       await addCategories(category);
     } catch (error) {
-      set({
-        isLoading: false,
-        error: { isError: true, errorMessage: 'Failed get all categories data' },
-      });
+      if (error instanceof Error) {
+        set({
+          categoriesLoading: false,
+          categoriesError: error,
+        });
+      }
+    } finally {
+      set({ categoriesLoading: false });
     }
   },
-  deleteCategoryHandler: async (categoryId, isDeleteWithTasks) => {
+  deleteCategoryHandler: async (categoryId, isDeleteWithTasks, userId) => {
     try {
       set({
-        isLoading: true,
-        error: { isError: false, errorMessage: '' },
+        categoriesLoading: true,
+        categoriesError: undefined,
       });
       if (isDeleteWithTasks) {
-        await deleteCategoryWithTasks(categoryId);
+        await deleteCategoryWithTasks(userId, categoryId);
       } else {
         await deleteCategory(categoryId);
       }
     } catch (error) {
-      set({
-        isLoading: false,
-        error: { isError: true, errorMessage: 'Failed get all categories data' },
-      });
+      if (error instanceof Error) {
+        set({
+          categoriesLoading: false,
+          categoriesError: error,
+        });
+      }
+    } finally {
+      set({ categoriesLoading: false });
     }
   },
 });
