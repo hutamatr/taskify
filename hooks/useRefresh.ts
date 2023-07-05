@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
 
-export default function useRefresh(fetcher: () => void) {
+export default function useRefresh(fetcher: () => Promise<void>) {
   const [refreshing, setRefreshing] = useState(false);
 
-  const refreshHandler = useCallback(() => {
+  const refreshHandler = useCallback(async () => {
     setRefreshing(true);
-    fetcher();
+    await fetcher();
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
