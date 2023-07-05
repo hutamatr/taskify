@@ -2,20 +2,19 @@ import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, HelperText, TextInput } from 'react-native-paper';
-import { shallow } from 'zustand/shallow';
 
 import Text from '../ui/Text';
 import useInputState from '../../hooks/useInputState';
 import useValidation from '../../hooks/useValidation';
-import { useStore } from '../../store/useStore';
 import type { IAuth, SignInScreenNavigationProp } from '../../types/types';
 
 interface IAuthForm {
   isSignIn: boolean;
+  isLoading: boolean;
   onSubmit: (authData: IAuth) => void;
 }
 
-export default function AuthForm({ isSignIn, onSubmit }: IAuthForm) {
+export default function AuthForm({ isSignIn, isLoading, onSubmit }: IAuthForm) {
   const [isPasswordView, setIsPasswordView] = useState(false);
   const {
     input: userInput,
@@ -29,14 +28,6 @@ export default function AuthForm({ isSignIn, onSubmit }: IAuthForm) {
   const { input: credentialsForm, setInput: setCredentialsForm } = useInputState({
     inputState: { userName: false, email: false, password: false, confirmPassword: false },
   });
-
-  const { isLoading } = useStore(
-    (state) => ({
-      isLoading: state.isLoading,
-      error: state.error,
-    }),
-    shallow
-  );
 
   const { userNameValidation, emailValidation, passwordValidation } = useValidation();
   const navigation = useNavigation<SignInScreenNavigationProp>();
@@ -166,6 +157,14 @@ export default function AuthForm({ isSignIn, onSubmit }: IAuthForm) {
           style={{ paddingVertical: 4 }}
           onPress={formSubmitHandler}
           loading={isLoading}
+          disabled={
+            isSignIn
+              ? !credentialsForm.email || !credentialsForm.password
+              : !credentialsForm.userName ||
+                !credentialsForm.email ||
+                !credentialsForm.password ||
+                !credentialsForm.confirmPassword
+          }
         >
           {isSignIn ? 'Sign In' : 'Sign Up'}
         </Button>
