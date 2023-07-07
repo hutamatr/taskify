@@ -1,10 +1,10 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
-import AllTaskPage from '../screens/AllTaskPage';
-import CategoriesPage from '../screens/CategoriesPage';
-import HomePage from '../screens/HomePage';
-import ProfilePage from '../screens/ProfilePage';
+import AllTaskPage from '../screens/AllTask';
+import CategoriesPage from '../screens/Categories';
+import HomePage from '../screens/Home';
+import ProfilePage from '../screens/Profile';
 import type { RootStackParamList } from '../types/types';
 
 const Tabs = createMaterialBottomTabNavigator<RootStackParamList>();
