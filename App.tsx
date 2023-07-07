@@ -15,10 +15,11 @@ import 'expo-dev-client';
 
 import Text from './components/ui/Text';
 import HomeTabsNavigation from './navigation/HomeTabsNavigation';
-import CategoriesDetailPage from './screens/CategoriesDetailPage';
-import CreateTaskPage from './screens/CreateTaskPage';
-import SignInPage from './screens/SignInPage';
-import SignUpPage from './screens/SignUpPage';
+import CategoriesDetail from './screens/CategoriesDetail';
+import CreateTask from './screens/CreateTask';
+import EditTask from './screens/EditTask';
+import SignIn from './screens/SignIn';
+import SignUp from './screens/SignUp';
 import { useStore } from './store/useStore';
 import type { RootStackParamList } from './types/types';
 
@@ -88,7 +89,7 @@ export default function App() {
                 />
                 <Stack.Screen
                   name="CreateTask"
-                  component={CreateTaskPage}
+                  component={CreateTask}
                   options={{
                     title: 'Create Task',
                     headerShadowVisible: false,
@@ -103,8 +104,24 @@ export default function App() {
                   }}
                 />
                 <Stack.Screen
+                  name="EditTask"
+                  component={EditTask}
+                  options={{
+                    title: 'Edit Task',
+                    headerShadowVisible: false,
+                    headerTitle: () => (
+                      <Text fontType="regular" variant="headlineSmall">
+                        Edit Task
+                      </Text>
+                    ),
+                    headerStyle: { backgroundColor: theme.colors.inversePrimary },
+                    statusBarStyle: 'dark',
+                    statusBarColor: theme.colors.inversePrimary,
+                  }}
+                />
+                <Stack.Screen
                   name="CategoriesDetail"
-                  component={CategoriesDetailPage}
+                  component={CategoriesDetail}
                   options={{
                     headerShadowVisible: false,
                     headerStyle: { backgroundColor: theme.colors.inversePrimary },
@@ -117,7 +134,7 @@ export default function App() {
               <>
                 <Stack.Screen
                   name="SignIn"
-                  component={SignInPage}
+                  component={SignIn}
                   options={{
                     title: '',
                     headerShadowVisible: false,
@@ -129,7 +146,7 @@ export default function App() {
                 />
                 <Stack.Screen
                   name="SignUp"
-                  component={SignUpPage}
+                  component={SignUp}
                   options={{
                     title: '',
                     headerShadowVisible: false,
