@@ -1,13 +1,13 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useCollectionOnce } from '@skillnation/react-native-firebase-hooks/firestore';
+import { useCollection } from '@skillnation/react-native-firebase-hooks/firestore';
 import { useLayoutEffect, useState } from 'react';
 import { Alert, GestureResponderEvent, StyleSheet, View } from 'react-native';
 import { Menu } from 'react-native-paper';
 import { shallow } from 'zustand/shallow';
 
 import { queryTasksByCategory } from '../api/api';
-import TasksList from '../components/tasks-page/TasksList';
+import TasksList from '../components/all-tasks-screen/TasksList';
 import Text from '../components/ui/Text';
 import useFormatData from '../hooks/useFormatData';
 import { useStore } from '../store/useStore';
@@ -17,7 +17,7 @@ import type {
   ITask,
 } from '../types/types';
 
-export default function CategoriesDetailPage() {
+export default function CategoriesDetail() {
   const [visible, setVisible] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
   const route = useRoute<CategoriesDetailScreenRouteProp>();
@@ -31,7 +31,7 @@ export default function CategoriesDetailPage() {
     shallow
   );
 
-  const [taskByCategory, taskByCategoryLoading, taskByCategoryError] = useCollectionOnce(
+  const [taskByCategory, taskByCategoryLoading, taskByCategoryError] = useCollection(
     queryTasksByCategory(userInfo?.uid as string, route.params.id as string)
   );
 

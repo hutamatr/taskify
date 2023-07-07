@@ -1,25 +1,26 @@
 import { useNavigation } from '@react-navigation/native';
-import { useCollection } from '@skillnation/react-native-firebase-hooks/firestore';
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
+import { shallow } from 'zustand/shallow';
 
 import RecentTasks from './RecentTasks';
 import Text from '../../ui/Text';
-import { queryTasks } from '../../../api/api';
-import useFormatData from '../../../hooks/useFormatData';
 import { useStore } from '../../../store/useStore';
-import type { HomeNavigationProp, ITask } from '../../../types/types';
+import type { HomeNavigationProp } from '../../../types/types';
 
 export default function Tasks() {
   const navigation = useNavigation<HomeNavigationProp>();
-  const userInfo = useStore((state) => state.userInfo);
-
-  const [tasks, loading, error] = useCollection(queryTasks(userInfo?.uid as string));
-
-  const tasksData = useFormatData<ITask[]>(tasks);
+  const { tasks, tasksStatus, tasksError } = useStore(
+    (state) => ({
+      tasks: state.tasks,
+      tasksStatus: state.tasksStatus,
+      tasksError: state.tasksError,
+    }),
+    shallow
+  );
 
   const showAllTaskHandler = () => {
-    navigation.navigate('Tasks');
+    navigation.navigate('Tasks', { snackbarShow: false });
   };
 
   return (
@@ -29,8 +30,8 @@ export default function Tasks() {
           Recent Task
         </Text>
       </View>
-      <RecentTasks tasks={tasksData} isLoading={loading} error={error} />
-      {tasksData.length > 0 && (
+      <RecentTasks tasks={tasks} isLoading={tasksStatus === 'pending'} error={tasksError?.error} />
+      {tasks.length > 0 && (
         <View style={styles.buttonContainer}>
           <Button
             mode="text"

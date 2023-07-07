@@ -1,23 +1,25 @@
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useCollection } from '@skillnation/react-native-firebase-hooks/firestore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { AnimatedFAB } from 'react-native-paper';
+import { AnimatedFAB, Snackbar } from 'react-native-paper';
 
 import { queryTasksCompleted, queryTasksInProgress } from '../api/api';
-import TasksFilter from '../components/tasks-page/TasksFilter';
-import TasksHeader from '../components/tasks-page/TasksHeader';
-import TasksList from '../components/tasks-page/TasksList';
+import TasksFilter from '../components/all-tasks-screen/TasksFilter';
+import TasksHeader from '../components/all-tasks-screen/TasksHeader';
+import TasksList from '../components/all-tasks-screen/TasksList';
 import useFormatData from '../hooks/useFormatData';
 import useHandleScroll from '../hooks/useHandleScroll';
 import { useStore } from '../store/useStore';
-import type { ITask, TasksNavigationProp } from '../types/types';
+import type { ITask, TasksNavigationProp, TasksScreenRouteProp } from '../types/types';
 
-export default function AllTaskPage() {
-  const { handleScroll, showButton } = useHandleScroll();
-  const navigation = useNavigation<TasksNavigationProp>();
+export default function AllTask() {
+  const [visible, setVisible] = useState(false);
   const [isCompletedView, setIsCompletedView] = useState(false);
 
+  const { handleScroll, showButton } = useHandleScroll();
+  const navigation = useNavigation<TasksNavigationProp>();
+  const route = useRoute<TasksScreenRouteProp>();
   const userInfo = useStore((state) => state.userInfo);
 
   const [tasksCompleted, completedIsLoading, completedError] = useCollection(
@@ -29,6 +31,14 @@ export default function AllTaskPage() {
 
   const tasksCompletedData = useFormatData<ITask[]>(tasksCompleted);
   const tasksInProgressData = useFormatData<ITask[]>(tasksInProgress);
+
+  useEffect(() => {
+    if (route.params?.snackbarShow) {
+      setVisible(route.params.snackbarShow);
+    }
+  }, [route.params]);
+
+  const onDismissSnackBar = () => setVisible(false);
 
   const createNewTaskHandler = () => {
     navigation.navigate('CreateTask');
@@ -68,6 +78,19 @@ export default function AllTaskPage() {
         iconMode="dynamic"
         style={styles.fab}
       />
+      <Snackbar
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        duration={5000}
+        action={{
+          label: 'Ok',
+          onPress: () => {
+            onDismissSnackBar();
+          },
+        }}
+      >
+        {route.params?.message}
+      </Snackbar>
     </View>
   );
 }

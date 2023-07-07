@@ -14,9 +14,11 @@ interface ICategoriesForm {
 
 export default function CategoriesForm({ bottomSheetRef }: ICategoriesForm) {
   const { input, onChangeInputHandler, setInput } = useInputState({ inputState: { title: '' } });
-  const { addCategory, userInfo } = useStore(
+  const { addCategory, categoriesStatus, userInfo } = useStore(
     (state) => ({
       addCategory: state.addCategoryHandler,
+      categoriesStatus: state.categoriesStatus,
+      categoriesError: state.categoriesError,
       userInfo: state.userInfo,
     }),
     shallow
@@ -46,12 +48,9 @@ export default function CategoriesForm({ bottomSheetRef }: ICategoriesForm) {
       userId: userInfo?.uid,
     };
 
-    try {
-      addCategory(newCategory);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    } finally {
+    addCategory(newCategory);
+
+    if (categoriesStatus !== 'pending') {
       setInput({ title: '' });
       bottomSheetRef.current?.close();
     }
@@ -80,7 +79,11 @@ export default function CategoriesForm({ bottomSheetRef }: ICategoriesForm) {
                 Cancel
               </Text>
             </Button>
-            <Button mode="contained" onPress={submitCategoriesHandler}>
+            <Button
+              mode="contained"
+              onPress={submitCategoriesHandler}
+              loading={categoriesStatus === 'pending'}
+            >
               <Text fontType="semibold" variant="titleMedium">
                 Add Category
               </Text>

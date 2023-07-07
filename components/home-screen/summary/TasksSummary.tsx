@@ -1,23 +1,27 @@
-import { useCollection } from '@skillnation/react-native-firebase-hooks/firestore';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
+import { shallow } from 'zustand/shallow';
 
 import SummaryCard from './SummaryCard';
 import Loading from '../../ui/Loading';
 import Text from '../../ui/Text';
-import { queryTasks } from '../../../api/api';
-import useFormatData from '../../../hooks/useFormatData';
 import { useStore } from '../../../store/useStore';
-import { ITask } from '../../../types/types';
 
 export default function TasksSummary() {
   const theme = useTheme();
 
-  const userInfo = useStore((state) => state.userInfo);
-
-  const [tasks, loading, error] = useCollection(queryTasks(userInfo?.uid as string));
-
-  const tasksData = useFormatData<ITask[]>(tasks);
+  const { tasks, tasksStatus, tasksError, categories, categoriesStatus, categoriesError } =
+    useStore(
+      (state) => ({
+        tasks: state.tasks,
+        categories: state.categories,
+        tasksStatus: state.tasksStatus,
+        categoriesStatus: state.categoriesStatus,
+        tasksError: state.tasksError,
+        categoriesError: state.categoriesError,
+      }),
+      shallow
+    );
 
   return (
     <View style={styles.summaryContainer}>
@@ -25,8 +29,8 @@ export default function TasksSummary() {
         <Text variant="displayMedium" numberOfLines={2} lineBreakMode="tail" fontType="medium">
           your have
         </Text>
-        {loading && <Loading size="large" />}
-        {!loading && (
+        {tasksStatus === 'pending' && <Loading size="large" />}
+        {tasksStatus !== 'pending' && tasksStatus !== 'rejected' && (
           <Text
             variant="displayLarge"
             numberOfLines={2}
@@ -34,15 +38,20 @@ export default function TasksSummary() {
             fontType="semibold"
             style={{ color: theme.colors.primary }}
           >
-            {tasksData.length > 99 ? '99+' : tasksData.length.toString()}
+            {tasks.length > 99 ? '99+' : tasks.length.toString()}
           </Text>
         )}
 
         <Text variant="displayMedium" numberOfLines={2} lineBreakMode="tail" fontType="medium">
-          tasks today
+          tasks total
         </Text>
       </View>
-      <SummaryCard tasks={tasksData} isLoading={loading} error={error} />
+      <SummaryCard
+        tasks={tasks}
+        categories={categories}
+        isLoading={tasksStatus === 'pending' || categoriesStatus === 'pending'}
+        error={tasksError?.error ?? categoriesError?.error}
+      />
     </View>
   );
 }

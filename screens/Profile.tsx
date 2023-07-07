@@ -1,9 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 
-import ProfileHeader from '../components/profile-page/ProfileHeader';
-import ProfileList from '../components/profile-page/ProfileList';
+import ProfileHeader from '../components/profile-screen/ProfileHeader';
+import ProfileList from '../components/profile-screen/ProfileList';
 
-export default function ProfilePage() {
+export default function Profile() {
   return (
     <View style={styles.container}>
       <ProfileHeader />

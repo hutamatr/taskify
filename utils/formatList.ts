@@ -1,6 +1,6 @@
 import type { ICategories } from '../types/types';
 
-export function formatData(data: ICategories[], numColumns: number) {
+export function formatList(data: ICategories[], numColumns: number) {
   const numberOfFullRows = Math.floor(data.length / numColumns);
 
   let numberOfElementsLastRow = data.length - numberOfFullRows * numColumns;

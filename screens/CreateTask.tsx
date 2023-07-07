@@ -2,12 +2,12 @@ import { useCollectionOnce } from '@skillnation/react-native-firebase-hooks/fire
 import { StyleSheet, View } from 'react-native';
 
 import { queryCategories } from '../api/api';
-import TaskForm from '../components/createtask-page/TaskForm';
+import TaskForm from '../components/task-form/TaskForm';
 import useFormatData from '../hooks/useFormatData';
 import { useStore } from '../store/useStore';
 import type { ICategories } from '../types/types';
 
-export default function CreateTaskPage() {
+export default function CreateTask() {
   const userInfo = useStore((state) => state.userInfo);
 
   const [categories, loading, error] = useCollectionOnce(queryCategories(userInfo?.uid as string));
@@ -16,7 +16,7 @@ export default function CreateTaskPage() {
 
   return (
     <View style={styles.container}>
-      <TaskForm categories={categoriesData} isLoading={loading} error={error} />
+      <TaskForm categories={categoriesData} isLoading={loading} error={error} isEdit={false} />
     </View>
   );
 }

@@ -4,15 +4,16 @@ import { Card } from 'react-native-paper';
 
 import Loading from '../../ui/Loading';
 import Text from '../../ui/Text';
-import type { ITask } from '../../../types/types';
+import type { ICategories, ITask } from '../../../types/types';
 
 interface ISummaryCardProps {
   tasks: ITask[];
+  categories: ICategories[];
   isLoading: boolean;
   error: Error | undefined;
 }
 
-export default function SummaryCard({ tasks, isLoading }: ISummaryCardProps) {
+export default function SummaryCard({ tasks, categories, isLoading }: ISummaryCardProps) {
   const totalInProgress = useMemo(() => {
     return tasks?.filter((task) => task.isCompleted === false).length;
   }, [tasks]);
@@ -20,6 +21,10 @@ export default function SummaryCard({ tasks, isLoading }: ISummaryCardProps) {
   const totalDone = useMemo(() => {
     return tasks?.filter((task) => task.isCompleted === true).length;
   }, [tasks]);
+
+  const totalCategories = useMemo(() => {
+    return categories.length;
+  }, [categories]);
 
   return (
     <View style={styles.cardContainer}>
@@ -74,16 +79,28 @@ export default function SummaryCard({ tasks, isLoading }: ISummaryCardProps) {
             </Card.Content>
           )}
         </Card>
-        {/* <Card style={styles.summaryCard} mode="contained" theme={{ roundness: 8 }}>
-          <Card.Content style={styles.cardContent}>
-            <Text variant="displayMedium" fontType="regular">
-              16
-            </Text>
-            <Text variant="titleMedium" fontType="semibold">
-              task in todo
-            </Text>
-          </Card.Content>
-        </Card> */}
+        <Card
+          style={styles.summaryCard}
+          contentStyle={{
+            justifyContent: 'center',
+            alignItems: isLoading ? 'center' : 'flex-start',
+            height: 120,
+          }}
+          mode="contained"
+          theme={{ roundness: 8 }}
+        >
+          {isLoading && <Loading size="large" />}
+          {!isLoading && (
+            <Card.Content style={styles.cardContent}>
+              <Text variant="displayMedium" fontType="regular">
+                {totalCategories}
+              </Text>
+              <Text variant="titleMedium" fontType="semibold">
+                {totalCategories > 1 ? 'categories' : 'category'}
+              </Text>
+            </Card.Content>
+          )}
+        </Card>
       </View>
     </View>
   );

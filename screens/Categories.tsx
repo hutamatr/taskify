@@ -5,15 +5,15 @@ import { StyleSheet, View } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
 
 import { queryCategories } from '../api/api';
-import CategoriesHeader from '../components/categories-page/CategoriesHeader';
-import CategoriesList from '../components/categories-page/CategoriesList';
-import CategoriesForm from '../components/createcategories-page/CategoriesForm';
+import CategoriesHeader from '../components/categories-screen/CategoriesHeader';
+import CategoriesList from '../components/categories-screen/CategoriesList';
+import CategoriesForm from '../components/createcategories-screen/CategoriesForm';
 import useFormatData from '../hooks/useFormatData';
 import useHandleScroll from '../hooks/useHandleScroll';
 import { useStore } from '../store/useStore';
 import { ICategories } from '../types/types';
 
-export default function CategoriesPage() {
+export default function Categories() {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const userInfo = useStore((state) => state.userInfo);
