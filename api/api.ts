@@ -28,6 +28,10 @@ export const queryCategories = (userId: string) => {
   return categoriesColRef.where('userId', '==', userId);
 };
 
+export const queryUser = (userId: string) => {
+  return usersColRef.where('userId', '==', userId);
+};
+
 // ##### TASKS ##### //
 
 export async function addTask(newTask: ITask) {
