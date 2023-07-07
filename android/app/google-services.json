@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "228430311363",
+    "project_id": "task-manager-app-7306a",
+    "storage_bucket": "task-manager-app-7306a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:228430311363:android:979c1925561c72e753d776",
+        "android_client_info": {
+          "package_name": "com.hutamatr.taskmanagerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "228430311363-pankqfcsbbr08gp8jfqou3u5plki1r23.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDa737kTXneCUc8DDb2ownF-7S2FEbbB9Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "228430311363-pankqfcsbbr08gp8jfqou3u5plki1r23.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "228430311363-9qqtfngbmivlrd9mhqingbn3nq32f81b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hutamatr.taskmanagerapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
