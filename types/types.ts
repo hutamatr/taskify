@@ -12,16 +12,17 @@ export interface ICredentials extends IAuth {
   confirmPassword: string;
 }
 
-export interface IUserInfo {
+export interface IUser {
   email: string;
-  uid: string;
+  name: string;
+  userId: string;
 }
 
 export interface ITask {
   id?: string;
-  title: string;
-  description: string;
-  date: string;
+  title?: string;
+  description?: string;
+  date?: string;
   isCompleted?: boolean;
   createdAt?: string;
   updatedAt?: string | null;
@@ -41,9 +42,10 @@ export interface RootStackParamList extends ParamListBase {
   Home: undefined;
   Categories: undefined;
   Profile: undefined;
-  Tasks: undefined;
+  Tasks: { snackbarShow: boolean; message?: string };
   HomeTabs: undefined;
   CreateTask: undefined;
+  EditTask: ITask;
   CreateCategories: undefined;
   CategoriesDetail: ICategories;
   SignUp: undefined;
@@ -59,6 +61,8 @@ export type CategoriesNavigationProp = NativeStackNavigationProp<RootStackParamL
 export type ProfileNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
 
 export type CreateTaskNavigationProp = NativeStackNavigationProp<RootStackParamList, 'CreateTask'>;
+
+export type EditTaskNavigationProp = NativeStackNavigationProp<RootStackParamList, 'EditTask'>;
 
 export type CreateCategoriesNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -76,3 +80,7 @@ export type SignUpScreenNavigationProp = NativeStackNavigationProp<RootStackPara
 export type CategoriesDetailScreenRouteProp = RouteProp<RootStackParamList, 'CategoriesDetail'>;
 
 export type CategoriesScreenRouteProp = RouteProp<RootStackParamList, 'Categories'>;
+
+export type EditTaskScreenRouteProp = RouteProp<RootStackParamList, 'EditTask'>;
+
+export type TasksScreenRouteProp = RouteProp<RootStackParamList, 'Tasks'>;
