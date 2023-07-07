@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import TaskItem from '../../tasks-page/TasksItem';
+import TaskItem from '../../all-tasks-screen/TasksItem';
 import Loading from '../../ui/Loading';
 import Text from '../../ui/Text';
 import { ITask } from '../../../types/types';
@@ -29,17 +29,20 @@ export default function RecentTasks({ tasks, isLoading, error }: IRecentTasksPro
       )}
       {!isLoading && !error && tasks && tasks.length > 0 && (
         <>
-          {tasks.slice(0, 3).map((item) => {
-            return (
-              <TaskItem
-                key={item.id}
-                title={item.title}
-                date={item.date}
-                description={item.description}
-                isCompleted={item.isCompleted}
-              />
-            );
-          })}
+          {tasks
+            .slice(0, 3)
+            .filter((item) => !item.isCompleted)
+            .map((item) => {
+              return (
+                <TaskItem
+                  key={item.id}
+                  title={item.title}
+                  date={item.date}
+                  description={item.description}
+                  isCompleted={item.isCompleted}
+                />
+              );
+            })}
         </>
       )}
     </View>

@@ -1,17 +1,23 @@
-import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
 import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import { Button, TextInput } from 'react-native-paper';
 import { shallow } from 'zustand/shallow';
 
-import CategoriesItem from '../categories-page/CategoriesItem';
+import CategoriesItem from '../categories-screen/CategoriesItem';
 import Loading from '../ui/Loading';
 import Text from '../ui/Text';
 import useInputState from '../../hooks/useInputState';
 import { useStore } from '../../store/useStore';
-import { CreateTaskNavigationProp, ICategories, ITask } from '../../types/types';
-import { formatData } from '../../utils/formatDataList';
+import {
+  CreateTaskNavigationProp,
+  EditTaskNavigationProp,
+  EditTaskScreenRouteProp,
+  ICategories,
+  ITask,
+} from '../../types/types';
+import { formatList } from '../../utils/formatList';
 
 const numColumns = 2;
 
@@ -19,9 +25,10 @@ interface ITaskFormProps {
   categories: ICategories[];
   isLoading: boolean;
   error: Error | undefined;
+  isEdit: boolean;
 }
 
-export default function TaskForm({ categories, isLoading, error }: ITaskFormProps) {
+export default function TaskForm({ categories, isLoading, error, isEdit }: ITaskFormProps) {
   const [open, setOpen] = useState(false);
   const { input, onChangeInputHandler, setInput } = useInputState<{
     title: string;
@@ -33,15 +40,33 @@ export default function TaskForm({ categories, isLoading, error }: ITaskFormProp
     inputState: { title: '', description: '', date: new Date(), categoryId: '', categoryName: '' },
   });
 
-  const navigation = useNavigation<CreateTaskNavigationProp>();
+  const navigation = useNavigation<CreateTaskNavigationProp & EditTaskNavigationProp>();
+  const route = useRoute<EditTaskScreenRouteProp>();
 
-  const { addTask, userInfo } = useStore(
+  const { addTask, updateTask, tasksStatus, userInfo } = useStore(
     (state) => ({
       addTask: state.addTaskHandler,
+      updateTask: state.updateTaskHandler,
+      tasksStatus: state.tasksStatus,
+      tasksError: state.tasksError,
       userInfo: state.userInfo,
     }),
     shallow
   );
+
+  useEffect(() => {
+    if (isEdit) {
+      const { title, description, date, categoryId, categoryName } = route.params;
+      setInput((prevState) => ({
+        ...prevState,
+        title: title as string,
+        description: description as string,
+        date: new Date(date as string),
+        categoryId: categoryId as string,
+        categoryName: categoryName as string,
+      }));
+    }
+  }, [isEdit, route.params]);
 
   const pickedCategoriesHandler = ({ name, id }: ICategories) => {
     setInput((prevState) => ({ ...prevState, categoryId: id as string, categoryName: name }));
@@ -56,24 +81,47 @@ export default function TaskForm({ categories, isLoading, error }: ITaskFormProp
       return;
     }
 
-    const newTask: ITask = {
-      title: input.title,
-      description: input.description,
-      date: input.date.toISOString(),
-      categoryId: input.categoryId,
-      categoryName: input.categoryName,
-      userId: userInfo?.uid,
-    };
+    if (isEdit) {
+      const updatedTask: ITask = {
+        id: route.params.id,
+        title: input.title,
+        description: input.description,
+        date: input.date.toISOString(),
+        categoryId: input.categoryId,
+        categoryName: input.categoryName,
+      };
 
-    try {
+      updateTask(updatedTask);
+    } else {
+      const newTask: ITask = {
+        title: input.title,
+        description: input.description,
+        date: input.date.toISOString(),
+        categoryId: input.categoryId,
+        categoryName: input.categoryName,
+        userId: userInfo?.uid,
+      };
       addTask(newTask);
-      navigation.goBack();
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    } finally {
-      setInput({ title: '', description: '', date: new Date(), categoryId: '', categoryName: '' });
     }
+    if (tasksStatus === 'successful') {
+      navigation.navigate('Tasks', {
+        snackbarShow: true,
+        message: isEdit ? 'Edit task successfully' : 'Create task successfully',
+      });
+    }
+    if (tasksStatus === 'rejected') {
+      navigation.navigate('Tasks', {
+        snackbarShow: true,
+        message: isEdit ? 'Edit task failed' : 'Create task failed',
+      });
+    }
+    setInput({
+      title: '',
+      description: '',
+      date: new Date(),
+      categoryId: '',
+      categoryName: '',
+    });
   };
 
   return (
@@ -141,7 +189,7 @@ export default function TaskForm({ categories, isLoading, error }: ITaskFormProp
         )}
         {!isLoading && !error && categories && categories.length > 0 && (
           <FlatList
-            data={formatData(categories, numColumns)}
+            data={formatList(categories, numColumns)}
             renderItem={({ item }) => {
               if (!item.id) {
                 return (
@@ -169,9 +217,14 @@ export default function TaskForm({ categories, isLoading, error }: ITaskFormProp
           />
         )}
       </View>
-      <Button mode="contained" style={styles.button} onPress={submitTaskHandler}>
+      <Button
+        mode="contained"
+        style={styles.button}
+        onPress={submitTaskHandler}
+        loading={tasksStatus === 'pending'}
+      >
         <Text fontType="semibold" variant="titleMedium">
-          Add Task
+          {isEdit ? 'Update Task' : '  Add Task'}
         </Text>
       </Button>
     </>

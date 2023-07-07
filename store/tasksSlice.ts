@@ -4,59 +4,118 @@ import { addTask, deleteTask, updateTask } from '../api/api';
 import type { ITask } from '../types/types';
 
 export interface ITaskSlice {
-  allTasksLoading: boolean;
-  allTasksError: Error | undefined;
+  tasks: ITask[] | [];
+  tasksStatus: 'idle' | 'pending' | 'successful' | 'rejected';
+  tasksError: { error: Error | undefined; errorMessage: string };
+  getAllTasksHandler: (tasks: ITask[], loading: boolean, error: Error | undefined) => void;
   addTaskHandler: (task: ITask) => void;
   updateTaskHandler: (task: ITask) => void;
   deleteTaskHandler: (taskId: string) => void;
 }
 
 export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) => ({
-  allTasksLoading: false,
-  allTasksError: undefined,
+  tasks: [],
+  tasksStatus: 'idle',
+  tasksError: { error: undefined, errorMessage: '' },
+  getAllTasksHandler: (tasks, loading, error) => {
+    set((state) => ({ ...state, tasks: tasks, allTasksLoading: loading, error: error }), true);
+  },
   addTaskHandler: async (task) => {
     try {
       set({
-        allTasksLoading: true,
-        allTasksError: undefined,
+        tasksStatus: 'pending',
+        tasksError: undefined,
       });
       await addTask(task);
-    } catch (error) {
-      if (error instanceof Error) {
-        set({ allTasksLoading: false, allTasksError: error });
+      set({ tasksStatus: 'successful' });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error.code) {
+        switch (error.code) {
+          case 'permission-denied':
+            set({
+              tasksStatus: 'rejected',
+              tasksError: { error: error, errorMessage: 'Permission denied!' },
+            });
+            break;
+          case 'unauthenticated':
+            set({
+              tasksStatus: 'rejected',
+              tasksError: { error: error, errorMessage: 'Your not authenticated!' },
+            });
+            break;
+        }
+      } else {
+        set({
+          tasksStatus: 'rejected',
+          tasksError: error,
+        });
       }
-    } finally {
-      set({ allTasksLoading: false });
     }
   },
   updateTaskHandler: async (task) => {
     try {
       set({
-        allTasksLoading: true,
-        allTasksError: undefined,
+        tasksStatus: 'pending',
+        tasksError: undefined,
       });
       await updateTask(task);
-    } catch (error) {
-      if (error instanceof Error) {
-        set({ allTasksLoading: false, allTasksError: error });
+      set({ tasksStatus: 'successful' });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error.code) {
+        switch (error.code) {
+          case 'permission-denied':
+            set({
+              tasksStatus: 'rejected',
+              tasksError: { error: error, errorMessage: 'Permission denied!' },
+            });
+            break;
+          case 'unauthenticated':
+            set({
+              tasksStatus: 'rejected',
+              tasksError: { error: error, errorMessage: 'Your not authenticated!' },
+            });
+            break;
+        }
+      } else {
+        set({
+          tasksStatus: 'rejected',
+          tasksError: error,
+        });
       }
-    } finally {
-      set({ allTasksLoading: false });
     }
   },
   deleteTaskHandler: async (taskId) => {
     try {
       set({
-        allTasksLoading: true,
-        allTasksError: undefined,
+        tasksStatus: 'pending',
+        tasksError: undefined,
       });
       await deleteTask(taskId);
-    } catch (error) {
-      if (error instanceof Error) {
-        set({ allTasksLoading: false, allTasksError: error });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error.code) {
+        switch (error.code) {
+          case 'permission-denied':
+            set({
+              tasksStatus: 'rejected',
+              tasksError: { error: error, errorMessage: 'Permission denied!' },
+            });
+            break;
+          case 'unauthenticated':
+            set({
+              tasksStatus: 'rejected',
+              tasksError: { error: error, errorMessage: 'Your not authenticated!' },
+            });
+            break;
+        }
+      } else {
+        set({
+          tasksStatus: 'rejected',
+          tasksError: error,
+        });
       }
-    } finally {
-      set({ allTasksLoading: false });
     }
   },
 });

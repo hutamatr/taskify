@@ -1,19 +1,23 @@
 import { StyleSheet, View } from 'react-native';
-import { Button } from 'react-native-paper';
+import { Button, Dialog, Portal } from 'react-native-paper';
 import { shallow } from 'zustand/shallow';
 
 import Text from '../ui/Text';
 import { useStore } from '../../store/useStore';
 
 export default function ProfileList() {
-  const { signOut, isLoading, userInfo } = useStore(
+  const { signOut, authStatus, authError, setStatus, userInfo } = useStore(
     (state) => ({
       signOut: state.SignOutHandler,
-      isLoading: state.authLoading,
+      authStatus: state.authStatus,
+      authError: state.authError,
+      setStatus: state.setStatusHandler,
       userInfo: state.userInfo,
     }),
     shallow
   );
+
+  const hideDialog = () => setStatus();
 
   const signOutHandler = () => {
     signOut();
@@ -37,11 +41,29 @@ export default function ProfileList() {
           {userInfo?.email}
         </Text>
       </View>
-      <Button mode="outlined" style={styles.button} onPress={signOutHandler} loading={isLoading}>
+      <Button
+        mode="outlined"
+        style={styles.button}
+        onPress={signOutHandler}
+        loading={authStatus === 'pending'}
+      >
         <Text fontType="semibold" variant="titleMedium">
           Sign Out
         </Text>
       </Button>
+      <Portal>
+        <Dialog visible={authStatus === 'rejected'} onDismiss={hideDialog}>
+          <Dialog.Title>Sign Up Failed!</Dialog.Title>
+          <Dialog.Content>
+            <Text fontType="medium" variant="bodyMedium">
+              {authError.errorMessage}
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={hideDialog}>Ok</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 }

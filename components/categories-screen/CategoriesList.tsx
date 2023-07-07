@@ -12,7 +12,7 @@ import CategoriesItem from './CategoriesItem';
 import Loading from '../ui/Loading';
 import Text from '../ui/Text';
 import type { CategoriesNavigationProp, ICategories } from '../../types/types';
-import { formatData } from '../../utils/formatDataList';
+import { formatList } from '../../utils/formatList';
 
 interface ICategoriesListProps {
   onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
@@ -52,7 +52,7 @@ export default function CategoriesList({
       )}
       {!isLoading && !error && categories && categories.length > 0 && (
         <FlatList
-          data={formatData(categories, numColumns)}
+          data={formatList(categories, numColumns)}
           renderItem={({ item }) => {
             if (!item.name) {
               return (

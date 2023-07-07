@@ -90,7 +90,9 @@ export default function AuthForm({ isSignIn, isLoading, onSubmit }: IAuthForm) {
       onSubmit(user);
     }
 
-    setUserInput({ userName: '', email: '', password: '', confirmPassword: '' });
+    if (!isLoading) {
+      setUserInput({ userName: '', email: '', password: '', confirmPassword: '' });
+    }
   };
 
   return (

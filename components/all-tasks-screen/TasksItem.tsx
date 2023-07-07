@@ -1,24 +1,35 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { Alert, GestureResponderEvent, StyleSheet, View } from 'react-native';
 import { Card, Menu, useTheme } from 'react-native-paper';
+import { shallow } from 'zustand/shallow';
 
 import Text from '../ui/Text';
 import { useStore } from '../../store/useStore';
-import type { ITask } from '../../types/types';
+import type { ITask, TasksNavigationProp } from '../../types/types';
 
 export default function TasksItem({
   title,
   description,
   date,
   isCompleted,
+  categoryId,
   categoryName,
   id,
 }: ITask) {
   const [visible, setVisible] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
 
-  const deleteTask = useStore((state) => state.deleteTaskHandler);
+  const navigation = useNavigation<TasksNavigationProp>();
+
+  const { deleteTask, updateTask } = useStore(
+    (state) => ({
+      deleteTask: state.deleteTaskHandler,
+      updateTask: state.updateTaskHandler,
+    }),
+    shallow
+  );
 
   const theme = useTheme();
 
@@ -34,6 +45,26 @@ export default function TasksItem({
 
     setMenuAnchor(anchor);
     openMenu();
+  };
+
+  const markAsDoneHandler = () => {
+    if (!isCompleted) {
+      updateTask({
+        id: id as string,
+        isCompleted: true,
+      });
+    } else {
+      updateTask({
+        id: id as string,
+        isCompleted: false,
+      });
+    }
+    closeMenu();
+  };
+
+  const editTaskHandler = () => {
+    navigation.navigate('EditTask', { id, title, description, date, categoryId, categoryName });
+    closeMenu();
   };
 
   const deleteTaskHandler = () => {
@@ -53,10 +84,6 @@ export default function TasksItem({
       { cancelable: true }
     );
     closeMenu();
-  };
-
-  const editTaskHandler = () => {
-    //
   };
 
   return (
@@ -84,7 +111,7 @@ export default function TasksItem({
         </View>
         <View style={styles.titleContainer}>
           <Text variant="bodySmall" fontType="regular">
-            {new Date(date).toLocaleString()}
+            {new Date(date as string).toLocaleString()}
           </Text>
           <MaterialCommunityIcons
             name="dots-vertical"
@@ -95,6 +122,11 @@ export default function TasksItem({
         </View>
       </Card.Content>
       <Menu visible={visible} onDismiss={closeMenu} anchor={menuAnchor}>
+        <Menu.Item
+          onPress={markAsDoneHandler}
+          title={isCompleted ? 'Mark uncompleted' : 'Mark completed'}
+          leadingIcon="check-circle-outline"
+        />
         <Menu.Item onPress={editTaskHandler} title="Edit" leadingIcon="pen" />
         <Menu.Item onPress={deleteTaskHandler} title="Delete" leadingIcon="delete" />
       </Menu>
