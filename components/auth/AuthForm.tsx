@@ -21,31 +21,31 @@ export default function AuthForm({ isSignIn, isLoading, onSubmit }: IAuthForm) {
     setInput: setUserInput,
     onChangeInputHandler: userInputHandler,
   } = useInputState({
-    inputState: { userName: '', email: '', password: '', confirmPassword: '' },
+    inputState: { username: '', email: '', password: '', confirmPassword: '' },
   });
-  const { userName, email, password, confirmPassword } = userInput;
+  const { username, email, password, confirmPassword } = userInput;
 
   const { input: credentialsForm, setInput: setCredentialsForm } = useInputState({
-    inputState: { userName: false, email: false, password: false, confirmPassword: false },
+    inputState: { username: false, email: false, password: false, confirmPassword: false },
   });
 
-  const { userNameValidation, emailValidation, passwordValidation } = useValidation();
+  const { usernameValidation, emailValidation, passwordValidation } = useValidation();
   const navigation = useNavigation<SignInScreenNavigationProp>();
 
   useEffect(() => {
-    const userNameIsValid = userNameValidation.test(userName);
+    const usernameIsValid = usernameValidation.test(username);
     const emailIsValid = emailValidation.test(email);
     const passwordIsValid = passwordValidation.test(password);
     const passwordsAreEqual = passwordIsValid ? password === confirmPassword : false;
 
     setCredentialsForm((prevState) => ({
       ...prevState,
-      userName: userNameIsValid,
+      username: usernameIsValid,
       email: emailIsValid,
       password: passwordIsValid,
       confirmPassword: passwordsAreEqual,
     }));
-  }, [userName, email, password, confirmPassword]);
+  }, [username, email, password, confirmPassword]);
 
   const passwordViewHandler = () => {
     setIsPasswordView((prevState) => !prevState);
@@ -62,7 +62,7 @@ export default function AuthForm({ isSignIn, isLoading, onSubmit }: IAuthForm) {
   const formSubmitHandler = () => {
     if (!isSignIn) {
       if (
-        !credentialsForm.userName ||
+        !credentialsForm.username ||
         !credentialsForm.email ||
         !credentialsForm.password ||
         !credentialsForm.confirmPassword
@@ -71,7 +71,7 @@ export default function AuthForm({ isSignIn, isLoading, onSubmit }: IAuthForm) {
       }
 
       const newUser = {
-        userName,
+        username,
         email,
         password,
       };
@@ -91,7 +91,7 @@ export default function AuthForm({ isSignIn, isLoading, onSubmit }: IAuthForm) {
     }
 
     if (!isLoading) {
-      setUserInput({ userName: '', email: '', password: '', confirmPassword: '' });
+      setUserInput({ username: '', email: '', password: '', confirmPassword: '' });
     }
   };
 
@@ -101,11 +101,11 @@ export default function AuthForm({ isSignIn, isLoading, onSubmit }: IAuthForm) {
         {!isSignIn && (
           <TextInput
             mode="outlined"
-            label="Username"
-            onChangeText={userInputHandler.bind(null, 'userName')}
+            label="username"
+            onChangeText={userInputHandler.bind(null, 'username')}
             autoCapitalize="none"
-            value={userName}
-            error={credentialsForm.userName && userName ? false : !!userName}
+            value={username}
+            error={credentialsForm.username && username ? false : !!username}
           />
         )}
 
@@ -162,7 +162,7 @@ export default function AuthForm({ isSignIn, isLoading, onSubmit }: IAuthForm) {
           disabled={
             isSignIn
               ? !credentialsForm.email || !credentialsForm.password
-              : !credentialsForm.userName ||
+              : !credentialsForm.username ||
                 !credentialsForm.email ||
                 !credentialsForm.password ||
                 !credentialsForm.confirmPassword

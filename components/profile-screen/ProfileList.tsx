@@ -1,21 +1,47 @@
-import { StyleSheet, View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Button, Dialog, Portal } from 'react-native-paper';
 import { shallow } from 'zustand/shallow';
 
 import Text from '../ui/Text';
 import { useStore } from '../../store/useStore';
+import type { ProfileNavigationProp } from '../../types/types';
 
-export default function ProfileList() {
-  const { signOut, authStatus, authError, setStatus, userInfo } = useStore(
+interface IProfileListProps {
+  username: string;
+  email: string;
+}
+
+export default function ProfileList({ email, username }: IProfileListProps) {
+  const { signOut, authStatus, authError, setStatus } = useStore(
     (state) => ({
       signOut: state.SignOutHandler,
       authStatus: state.authStatus,
       authError: state.authError,
       setStatus: state.setStatusHandler,
-      userInfo: state.userInfo,
     }),
     shallow
   );
+
+  const navigation = useNavigation<ProfileNavigationProp>();
+
+  const profileData = [
+    {
+      id: '01',
+      field: 'Username',
+      value: username,
+    },
+    {
+      id: '02',
+      field: 'Email',
+      value: email,
+    },
+  ];
+
+  const editProfileHandler = (profileWantEdit: string) => {
+    navigation.navigate('EditProfile', { profileWantUpdate: profileWantEdit });
+  };
 
   const hideDialog = () => setStatus();
 
@@ -25,22 +51,23 @@ export default function ProfileList() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.profileContainer}>
-        <Text fontType="semibold" variant="titleLarge">
-          Name
-        </Text>
-        <Text fontType="medium" variant="bodyLarge">
-          {userInfo?.displayName}
-        </Text>
-      </View>
-      <View style={styles.profileContainer}>
-        <Text fontType="semibold" variant="titleLarge">
-          Email
-        </Text>
-        <Text fontType="medium" variant="bodyLarge">
-          {userInfo?.email}
-        </Text>
-      </View>
+      {profileData.map(({ id, field, value }) => {
+        return (
+          <Pressable key={id} onPress={editProfileHandler.bind(null, field.toLowerCase())}>
+            <View style={styles.profileContainer}>
+              <View style={styles.profileChildContainer}>
+                <Text fontType="semibold" variant="titleMedium" style={styles.textField}>
+                  {field}
+                </Text>
+                <Text fontType="medium" variant="bodyLarge" style={styles.textProfile}>
+                  {value}
+                </Text>
+              </View>
+              <MaterialIcons name="keyboard-arrow-right" size={24} color="black" />
+            </View>
+          </Pressable>
+        );
+      })}
       <Button
         mode="outlined"
         style={styles.button}
@@ -72,11 +99,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: 24,
-    marginHorizontal: 16,
-    marginVertical: 24,
+    margin: 24,
   },
   profileContainer: {
-    rowGap: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  profileChildContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  textProfile: {
+    flex: 2,
+  },
+  textField: {
+    flex: 1,
   },
   button: {
     width: '100%',

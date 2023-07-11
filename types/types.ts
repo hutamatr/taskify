@@ -3,7 +3,7 @@ import type { ParamListBase, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export interface IAuth {
-  userName?: string;
+  username?: string;
   email: string;
   password: string;
 }
@@ -13,9 +13,11 @@ export interface ICredentials extends IAuth {
 }
 
 export interface IUser {
-  email: string;
-  name: string;
+  id?: string;
   userId: string;
+  email: string;
+  username: string;
+  password?: string;
 }
 
 export interface ITask {
@@ -38,14 +40,25 @@ export interface ICategories {
   userId?: string;
 }
 
+export interface IProfile {
+  displayName?: string | null;
+  photoURL?: string | null;
+}
+
+interface ISnackbar {
+  snackbarShow: boolean;
+  message?: string;
+}
+
 export interface RootStackParamList extends ParamListBase {
   Home: undefined;
-  Categories: undefined;
-  Profile: undefined;
-  Tasks: { snackbarShow: boolean; message?: string };
+  Categories: ISnackbar;
+  Profile: ISnackbar;
+  Tasks: ISnackbar;
   HomeTabs: undefined;
   CreateTask: undefined;
   EditTask: ITask;
+  EditProfile: { profileWantUpdate: string };
   CreateCategories: undefined;
   CategoriesDetail: ICategories;
   SignUp: undefined;
@@ -53,34 +66,29 @@ export interface RootStackParamList extends ParamListBase {
 }
 
 export type HomeNavigationProp = MaterialBottomTabNavigationProp<RootStackParamList, 'Home'>;
-
 export type TasksNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Tasks'>;
-
 export type CategoriesNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Categories'>;
-
 export type ProfileNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
-
 export type CreateTaskNavigationProp = NativeStackNavigationProp<RootStackParamList, 'CreateTask'>;
-
 export type EditTaskNavigationProp = NativeStackNavigationProp<RootStackParamList, 'EditTask'>;
-
+export type EditProfileNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'EditProfile'
+>;
 export type CreateCategoriesNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'CreateCategories'
 >;
-
 export type CategoriesDetailNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'CategoriesDetail'
 >;
-
 export type SignInScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Sign In'>;
 export type SignUpScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Sign Up'>;
 
 export type CategoriesDetailScreenRouteProp = RouteProp<RootStackParamList, 'CategoriesDetail'>;
-
 export type CategoriesScreenRouteProp = RouteProp<RootStackParamList, 'Categories'>;
-
 export type EditTaskScreenRouteProp = RouteProp<RootStackParamList, 'EditTask'>;
-
+export type EditProfileScreenRouteProp = RouteProp<RootStackParamList, 'EditProfile'>;
 export type TasksScreenRouteProp = RouteProp<RootStackParamList, 'Tasks'>;
+export type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'Profile'>;

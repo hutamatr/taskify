@@ -1,5 +1,5 @@
 import BottomSheet, { useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { shallow } from 'zustand/shallow';
@@ -14,15 +14,23 @@ interface ICategoriesForm {
 
 export default function CategoriesForm({ bottomSheetRef }: ICategoriesForm) {
   const { input, onChangeInputHandler, setInput } = useInputState({ inputState: { title: '' } });
-  const { addCategory, categoriesStatus, userInfo } = useStore(
+
+  const { addCategory, categoriesStatus, authInfo } = useStore(
     (state) => ({
       addCategory: state.addCategoryHandler,
       categoriesStatus: state.categoriesStatus,
       categoriesError: state.categoriesError,
-      userInfo: state.userInfo,
+      authInfo: state.authInfo,
     }),
     shallow
   );
+
+  useEffect(() => {
+    if (categoriesStatus === 'successful') {
+      setInput({ title: '' });
+      bottomSheetRef.current?.close();
+    }
+  }, [categoriesStatus]);
 
   const snapPoints = useMemo(() => ['25'], []);
   const animationConfigs = useBottomSheetSpringConfigs({
@@ -45,15 +53,10 @@ export default function CategoriesForm({ bottomSheetRef }: ICategoriesForm) {
 
     const newCategory = {
       name: input.title,
-      userId: userInfo?.uid,
+      userId: authInfo?.uid,
     };
 
     addCategory(newCategory);
-
-    if (categoriesStatus !== 'pending') {
-      setInput({ title: '' });
-      bottomSheetRef.current?.close();
-    }
   };
 
   return (
@@ -84,9 +87,7 @@ export default function CategoriesForm({ bottomSheetRef }: ICategoriesForm) {
               onPress={submitCategoriesHandler}
               loading={categoriesStatus === 'pending'}
             >
-              <Text fontType="semibold" variant="titleMedium">
-                Add Category
-              </Text>
+              Add Category
             </Button>
           </View>
         </View>

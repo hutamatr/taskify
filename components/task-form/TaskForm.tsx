@@ -43,13 +43,13 @@ export default function TaskForm({ categories, isLoading, error, isEdit }: ITask
   const navigation = useNavigation<CreateTaskNavigationProp & EditTaskNavigationProp>();
   const route = useRoute<EditTaskScreenRouteProp>();
 
-  const { addTask, updateTask, tasksStatus, userInfo } = useStore(
+  const { addTask, updateTask, tasksStatus, authInfo } = useStore(
     (state) => ({
       addTask: state.addTaskHandler,
       updateTask: state.updateTaskHandler,
       tasksStatus: state.tasksStatus,
       tasksError: state.tasksError,
-      userInfo: state.userInfo,
+      authInfo: state.authInfo,
     }),
     shallow
   );
@@ -67,6 +67,21 @@ export default function TaskForm({ categories, isLoading, error, isEdit }: ITask
       }));
     }
   }, [isEdit, route.params]);
+
+  useEffect(() => {
+    if (tasksStatus === 'successful') {
+      navigation.navigate('Tasks', {
+        snackbarShow: true,
+        message: isEdit ? 'Edit task successfully' : 'Create task successfully',
+      });
+    }
+    if (tasksStatus === 'rejected') {
+      navigation.navigate('Tasks', {
+        snackbarShow: true,
+        message: isEdit ? 'Edit task failed' : 'Create task failed',
+      });
+    }
+  }, [tasksStatus, navigation]);
 
   const pickedCategoriesHandler = ({ name, id }: ICategories) => {
     setInput((prevState) => ({ ...prevState, categoryId: id as string, categoryName: name }));
@@ -99,22 +114,11 @@ export default function TaskForm({ categories, isLoading, error, isEdit }: ITask
         date: input.date.toISOString(),
         categoryId: input.categoryId,
         categoryName: input.categoryName,
-        userId: userInfo?.uid,
+        userId: authInfo?.uid,
       };
       addTask(newTask);
     }
-    if (tasksStatus === 'successful') {
-      navigation.navigate('Tasks', {
-        snackbarShow: true,
-        message: isEdit ? 'Edit task successfully' : 'Create task successfully',
-      });
-    }
-    if (tasksStatus === 'rejected') {
-      navigation.navigate('Tasks', {
-        snackbarShow: true,
-        message: isEdit ? 'Edit task failed' : 'Create task failed',
-      });
-    }
+
     setInput({
       title: '',
       description: '',

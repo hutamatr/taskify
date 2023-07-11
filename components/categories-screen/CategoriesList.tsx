@@ -68,7 +68,7 @@ export default function CategoriesList({
                 {...item}
                 mode="contained"
                 style={styles.categoriesItem}
-                textVariant="titleLarge"
+                textVariant="titleMedium"
                 onPress={viewCategoriesDetailHandler.bind(null, item)}
               />
             );
@@ -100,6 +100,8 @@ const styles = StyleSheet.create({
   categoriesItem: {
     marginHorizontal: 4,
     height: Dimensions.get('window').width / 4,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   categoriesEmptyContainer: {
     margin: 34,

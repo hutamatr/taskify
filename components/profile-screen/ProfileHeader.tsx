@@ -4,13 +4,14 @@ import { Avatar } from 'react-native-paper';
 
 import Header from '../ui/Header';
 import Text from '../ui/Text';
-import { useStore } from '../../store/useStore';
 import { getLabelByUsername } from '../../utils/usernameLabel';
 
-export default function ProfileHeader() {
-  const userInfo = useStore((state) => state.userInfo);
+interface IProfileHeaderProps {
+  username: string;
+}
 
-  const [label] = useState(getLabelByUsername(userInfo?.displayName as string));
+export default function ProfileHeader({ username }: IProfileHeaderProps) {
+  const [label] = useState(getLabelByUsername(username));
 
   return (
     <Header style={styles.headerContainer}>
@@ -24,7 +25,7 @@ export default function ProfileHeader() {
           }
         />
         <Text variant="headlineSmall" numberOfLines={1} lineBreakMode="tail" fontType="semibold">
-          {userInfo?.displayName}
+          {username}
         </Text>
       </View>
     </Header>
@@ -32,13 +33,13 @@ export default function ProfileHeader() {
 }
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    flex: 0.75,
+  },
   textProfileContainer: {
     flex: 3,
     gap: 24,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  headerContainer: {
-    flex: 0.75,
   },
 });

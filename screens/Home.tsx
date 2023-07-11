@@ -1,10 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
-import {
-  useCollection,
-  useCollectionOnce,
-} from '@skillnation/react-native-firebase-hooks/firestore';
+import { useCollection } from '@skillnation/react-native-firebase-hooks/firestore';
 import { useEffect } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
 import { shallow } from 'zustand/shallow';
 
@@ -15,51 +12,50 @@ import TasksSummary from '../components/home-screen/summary/TasksSummary';
 import Tasks from '../components/home-screen/tasks/Tasks';
 import useFormatData from '../hooks/useFormatData';
 import useHandleScroll from '../hooks/useHandleScroll';
-import useRefresh from '../hooks/useRefresh';
 import { useStore } from '../store/useStore';
 import type { HomeNavigationProp, ICategories, ITask, IUser } from '../types/types';
 
 export default function Home() {
   const { handleScroll, showButton } = useHandleScroll();
 
-  const { userInfo, getAllTasks, getAllCategories } = useStore(
+  const { authInfo, getAllTasks, getAllCategories, retrieveUser } = useStore(
     (state) => ({
-      userInfo: state.userInfo,
+      authInfo: state.authInfo,
       getAllTasks: state.getAllTasksHandler,
       getAllCategories: state.getAllCategoriesHandler,
+      retrieveUser: state.retrieveUserProfileHandler,
     }),
     shallow
   );
   const navigation = useNavigation<HomeNavigationProp>();
 
-  const [user, userLoading, _userError] = useCollectionOnce(queryUser(userInfo?.uid as string));
+  const [user, userLoading, _userError] = useCollection(queryUser(authInfo?.uid as string));
 
-  const [tasks, taskLoading, taskError, reload] = useCollectionOnce(
-    queryTasks(userInfo?.uid as string)
-  );
+  const [tasks, taskLoading, taskError] = useCollection(queryTasks(authInfo?.uid as string));
   const [categories, categoriesLoading, categoriesError] = useCollection(
-    queryCategories(userInfo?.uid as string)
+    queryCategories(authInfo?.uid as string)
   );
 
   const tasksData = useFormatData<ITask[]>(tasks);
   const categoriesData = useFormatData<ICategories[]>(categories);
-  const userData = useFormatData<IUser[]>(user);
+  const userData = useFormatData<IUser[]>(user)[0];
 
   useEffect(() => {
     getAllTasks(tasksData, taskLoading, taskError);
     getAllCategories(categoriesData, categoriesLoading, categoriesError);
+    retrieveUser(userData);
   }, [
     getAllTasks,
     getAllCategories,
+    retrieveUser,
     tasksData,
     taskLoading,
     taskError,
     categoriesData,
     categoriesLoading,
     categoriesError,
+    userData,
   ]);
-
-  const { refreshing, refreshHandler } = useRefresh(reload);
 
   const createNewTaskHandler = () => {
     navigation.navigate('CreateTask');
@@ -71,9 +67,8 @@ export default function Home() {
         onScroll={handleScroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
       >
-        <HomeHeader userData={userData[0]} loadingUser={userLoading} />
+        <HomeHeader userData={userData} loadingUser={userLoading} />
         <TasksSummary />
         <Categories />
         <Tasks />

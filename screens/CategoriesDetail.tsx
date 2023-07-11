@@ -23,16 +23,16 @@ export default function CategoriesDetail() {
   const route = useRoute<CategoriesDetailScreenRouteProp>();
   const navigation = useNavigation<CategoriesDetailNavigationProp>();
 
-  const { userInfo, deleteCategory } = useStore(
+  const { authInfo, deleteCategory } = useStore(
     (state) => ({
-      userInfo: state.userInfo,
+      authInfo: state.authInfo,
       deleteCategory: state.deleteCategoryHandler,
     }),
     shallow
   );
 
   const [taskByCategory, taskByCategoryLoading, taskByCategoryError] = useCollection(
-    queryTasksByCategory(userInfo?.uid as string, route.params.id as string)
+    queryTasksByCategory(authInfo?.uid as string, route.params.id as string)
   );
 
   const taskByCategoryData = useFormatData<ITask[]>(taskByCategory);
@@ -77,7 +77,7 @@ export default function CategoriesDetail() {
         {
           text: 'Delete',
           onPress: () => {
-            deleteCategory(route.params.id as string, false, userInfo?.uid as string);
+            deleteCategory(route.params.id as string, false, authInfo?.uid as string);
           },
           style: 'default',
         },
@@ -91,14 +91,14 @@ export default function CategoriesDetail() {
           {
             text: 'Category only',
             onPress: () => {
-              deleteCategory(route.params.id as string, false, userInfo?.uid as string);
+              deleteCategory(route.params.id as string, false, authInfo?.uid as string);
             },
             style: 'cancel',
           },
           {
             text: 'Delete all',
             onPress: () => {
-              deleteCategory(route.params.id as string, true, userInfo?.uid as string);
+              deleteCategory(route.params.id as string, true, authInfo?.uid as string);
             },
             style: 'default',
           },

@@ -16,10 +16,10 @@ interface IHomeHeaderProps {
 export default function HomeHeader({ userData, loadingUser }: IHomeHeaderProps) {
   const navigation = useNavigation<HomeNavigationProp>();
 
-  const label = getLabelByUsername(userData?.name);
+  const label = getLabelByUsername(userData?.username);
 
   const viewProfileHandler = () => {
-    navigation.navigate('Profile');
+    navigation.navigate('Profile', { snackbarShow: false });
   };
 
   return (
@@ -31,7 +31,7 @@ export default function HomeHeader({ userData, loadingUser }: IHomeHeaderProps) 
         {loadingUser && <Loading size="small" />}
         {!loadingUser && (
           <Text variant="headlineMedium" numberOfLines={1} lineBreakMode="tail" fontType="medium">
-            {userData?.name}
+            {userData?.username}
           </Text>
         )}
       </View>

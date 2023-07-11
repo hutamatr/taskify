@@ -62,6 +62,10 @@ export const categoriesSlice: StateCreator<ICategoriesSlice, [], [], ICategories
           categoriesError: error,
         });
       }
+    } finally {
+      setTimeout(() => {
+        set({ categoriesStatus: 'idle' });
+      }, 1500);
     }
   },
   deleteCategoryHandler: async (categoryId, isDeleteWithTasks, userId) => {
@@ -99,6 +103,10 @@ export const categoriesSlice: StateCreator<ICategoriesSlice, [], [], ICategories
           categoriesError: error,
         });
       }
+    } finally {
+      setTimeout(() => {
+        set({ categoriesStatus: 'idle' });
+      }, 1500);
     }
   },
 });

@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useCollection } from '@skillnation/react-native-firebase-hooks/firestore';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { AnimatedFAB, Snackbar } from 'react-native-paper';
 
@@ -10,35 +10,48 @@ import TasksHeader from '../components/all-tasks-screen/TasksHeader';
 import TasksList from '../components/all-tasks-screen/TasksList';
 import useFormatData from '../hooks/useFormatData';
 import useHandleScroll from '../hooks/useHandleScroll';
+import useSnackbar from '../hooks/useSnackbar';
 import { useStore } from '../store/useStore';
 import type { ITask, TasksNavigationProp, TasksScreenRouteProp } from '../types/types';
 
 export default function AllTask() {
-  const [visible, setVisible] = useState(false);
   const [isCompletedView, setIsCompletedView] = useState(false);
 
   const { handleScroll, showButton } = useHandleScroll();
+  const { visible, setVisible, onDismissSnackBar } = useSnackbar();
   const navigation = useNavigation<TasksNavigationProp>();
   const route = useRoute<TasksScreenRouteProp>();
-  const userInfo = useStore((state) => state.userInfo);
+  const authInfo = useStore((state) => state.authInfo);
 
   const [tasksCompleted, completedIsLoading, completedError] = useCollection(
-    queryTasksCompleted(userInfo?.uid as string)
+    queryTasksCompleted(authInfo?.uid as string)
   );
   const [tasksInProgress, progressIsLoading, progressError] = useCollection(
-    queryTasksInProgress(userInfo?.uid as string)
+    queryTasksInProgress(authInfo?.uid as string)
   );
 
   const tasksCompletedData = useFormatData<ITask[]>(tasksCompleted);
   const tasksInProgressData = useFormatData<ITask[]>(tasksInProgress);
+
+  const tasksCompletedSort = useMemo(() => {
+    const taskSorted = [...tasksCompletedData].sort(
+      (a, b) => +new Date(b.date as string) - +new Date(a.date as string)
+    );
+    return taskSorted;
+  }, [tasksCompletedData]);
+
+  const tasksInProgressSort = useMemo(() => {
+    const taskSorted = [...tasksInProgressData].sort(
+      (a, b) => +new Date(b.date as string) - +new Date(a.date as string)
+    );
+    return taskSorted;
+  }, [tasksInProgressData]);
 
   useEffect(() => {
     if (route.params?.snackbarShow) {
       setVisible(route.params.snackbarShow);
     }
   }, [route.params]);
-
-  const onDismissSnackBar = () => setVisible(false);
 
   const createNewTaskHandler = () => {
     navigation.navigate('CreateTask');
@@ -62,7 +75,7 @@ export default function AllTask() {
       />
       <TasksList
         onScroll={handleScroll}
-        tasks={isCompletedView ? tasksCompletedData : tasksInProgressData}
+        tasks={isCompletedView ? tasksCompletedSort : tasksInProgressSort}
         isLoading={isCompletedView ? completedIsLoading : progressIsLoading}
         error={isCompletedView ? completedError : progressError}
         style={{ marginBottom: 150 }}

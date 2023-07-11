@@ -5,7 +5,7 @@ import { usersColRef } from '../api/api';
 import type { IAuth } from '../types/types';
 
 export interface IAuthSlice {
-  userInfo: FirebaseAuthTypes.User | null;
+  authInfo: FirebaseAuthTypes.User | null;
   authStatus: 'idle' | 'pending' | 'successful' | 'rejected';
   authError: { error: Error | undefined; errorMessage: string };
   signUpHandler: (newUser: IAuth) => void;
@@ -17,24 +17,20 @@ export interface IAuthSlice {
 
 export const authSlice: StateCreator<IAuthSlice, [], [], IAuthSlice> = (set) => ({
   authStatus: 'idle',
-  userInfo: null,
+  authInfo: null,
   authError: { error: undefined, errorMessage: '' },
-  signUpHandler: ({ email, password, userName }) => {
+  signUpHandler: ({ email, password, username }) => {
     set({ authStatus: 'pending', authError: { error: undefined, errorMessage: '' } });
     auth()
       .createUserWithEmailAndPassword(email, password)
       .then((user) => {
-        user.user
-          .updateProfile({
-            displayName: userName,
-          })
-          .then(() => {
-            set({ userInfo: user.user });
-          });
+        user.user.updateProfile({
+          displayName: username,
+        });
 
         usersColRef.add({
           userId: user.user.uid,
-          name: userName,
+          username: username,
           email: email,
         });
 
@@ -64,7 +60,9 @@ export const authSlice: StateCreator<IAuthSlice, [], [], IAuthSlice> = (set) => 
         }
       })
       .finally(() => {
-        set({ authStatus: 'idle' });
+        setTimeout(() => {
+          set({ authStatus: 'idle' });
+        }, 1500);
       });
   },
   signInHandler: ({ email, password }) => {
@@ -72,7 +70,7 @@ export const authSlice: StateCreator<IAuthSlice, [], [], IAuthSlice> = (set) => 
     auth()
       .signInWithEmailAndPassword(email, password)
       .then((user) => {
-        set({ authStatus: 'successful', userInfo: user.user });
+        set({ authStatus: 'successful', authInfo: user.user });
       })
       .catch((error) => {
         if (error.code === 'auth/wrong-password') {
@@ -95,11 +93,13 @@ export const authSlice: StateCreator<IAuthSlice, [], [], IAuthSlice> = (set) => 
         }
       })
       .finally(() => {
-        set({ authStatus: 'idle' });
+        setTimeout(() => {
+          set({ authStatus: 'idle' });
+        }, 1500);
       });
   },
   authHandler: (user) => {
-    set((state) => ({ ...state, userInfo: user }), true);
+    set((state) => ({ ...state, authInfo: user }), true);
   },
   SignOutHandler: async () => {
     try {
@@ -117,7 +117,9 @@ export const authSlice: StateCreator<IAuthSlice, [], [], IAuthSlice> = (set) => 
         });
       }
     } finally {
-      set({ authStatus: 'idle' });
+      setTimeout(() => {
+        set({ authStatus: 'idle' });
+      }, 1500);
     }
   },
   setStatusHandler: () => {

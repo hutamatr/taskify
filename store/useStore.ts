@@ -1,21 +1,15 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { authSlice, type IAuthSlice } from './authSlice';
 import { categoriesSlice, type ICategoriesSlice } from './categoriesSlice';
 import { type ITaskSlice, tasksSlice } from './tasksSlice';
+import { type IUserProfileSlice, userProfileSlice } from './userProfileSlice';
 
-export const useStore = create<IAuthSlice & ITaskSlice & ICategoriesSlice>()(
-  persist(
-    (...a) => ({
-      ...authSlice(...a),
-      ...tasksSlice(...a),
-      ...categoriesSlice(...a),
-    }),
-    {
-      name: 'tasks-storage',
-      storage: createJSONStorage(() => AsyncStorage),
-    }
-  )
+export const useStore = create<IAuthSlice & ITaskSlice & ICategoriesSlice & IUserProfileSlice>()(
+  (...a) => ({
+    ...authSlice(...a),
+    ...tasksSlice(...a),
+    ...categoriesSlice(...a),
+    ...userProfileSlice(...a),
+  })
 );

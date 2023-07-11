@@ -1,3 +1,4 @@
+import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
 import { ICategories, ITask } from '../types/types';
@@ -6,10 +7,12 @@ const collectionUsers = 'users';
 const collectionTasks = 'tasks';
 const collectionCategories = 'categories';
 
+const db = firestore();
+
 // collection ref
-export const usersColRef = firestore().collection(collectionUsers);
-export const tasksColRef = firestore().collection(collectionTasks);
-export const categoriesColRef = firestore().collection(collectionCategories);
+export const usersColRef = db.collection(collectionUsers);
+export const tasksColRef = db.collection(collectionTasks);
+export const categoriesColRef = db.collection(collectionCategories);
 
 // queries
 export const queryTasks = (userId: string) => {
@@ -31,6 +34,14 @@ export const queryCategories = (userId: string) => {
 export const queryUser = (userId: string) => {
   return usersColRef.where('userId', '==', userId);
 };
+
+// ##### AUTH ##### //
+
+export function reAuthenticated(password: string) {
+  const user = auth().currentUser;
+  const cred = auth.EmailAuthProvider.credential(user?.email as string, password);
+  return user?.reauthenticateWithCredential(cred);
+}
 
 // ##### TASKS ##### //
 

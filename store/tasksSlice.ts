@@ -51,6 +51,10 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
           tasksError: error,
         });
       }
+    } finally {
+      setTimeout(() => {
+        set({ tasksStatus: 'idle', tasksError: undefined });
+      }, 1500);
     }
   },
   updateTaskHandler: async (task) => {
@@ -84,6 +88,10 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
           tasksError: error,
         });
       }
+    } finally {
+      setTimeout(() => {
+        set({ tasksStatus: 'idle', tasksError: undefined });
+      }, 1500);
     }
   },
   deleteTaskHandler: async (taskId) => {
@@ -93,6 +101,7 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
         tasksError: undefined,
       });
       await deleteTask(taskId);
+      set({ tasksStatus: 'successful' });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.code) {
@@ -116,6 +125,10 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
           tasksError: error,
         });
       }
+    } finally {
+      setTimeout(() => {
+        set({ tasksStatus: 'idle', tasksError: undefined });
+      }, 1500);
     }
   },
 });

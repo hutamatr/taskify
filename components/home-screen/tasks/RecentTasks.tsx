@@ -30,12 +30,15 @@ export default function RecentTasks({ tasks, isLoading, error }: IRecentTasksPro
       {!isLoading && !error && tasks && tasks.length > 0 && (
         <>
           {tasks
-            .slice(0, 3)
             .filter((item) => !item.isCompleted)
+            .slice(0, 3)
             .map((item) => {
               return (
                 <TaskItem
                   key={item.id}
+                  id={item.id}
+                  categoryId={item.categoryId}
+                  categoryName={item.categoryName}
                   title={item.title}
                   date={item.date}
                   description={item.description}
