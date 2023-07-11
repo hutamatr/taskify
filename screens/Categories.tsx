@@ -11,15 +11,17 @@ import CategoriesForm from '../components/createcategories-screen/CategoriesForm
 import useFormatData from '../hooks/useFormatData';
 import useHandleScroll from '../hooks/useHandleScroll';
 import { useStore } from '../store/useStore';
-import { ICategories } from '../types/types';
+import type { ICategories } from '../types/types';
 
 export default function Categories() {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-  const userInfo = useStore((state) => state.userInfo);
+  const authInfo = useStore((state) => state.authInfo);
+
+  const { handleScroll, showButton } = useHandleScroll();
 
   const [categories, categoriesIsLoading, categoriesError] = useCollection(
-    queryCategories(userInfo?.uid as string)
+    queryCategories(authInfo?.uid as string)
   );
 
   const categoriesData = useFormatData<ICategories[]>(categories);
@@ -27,8 +29,6 @@ export default function Categories() {
   const createNewCategoriesHandler = useCallback((index: number) => {
     bottomSheetRef.current?.snapToIndex(index);
   }, []);
-
-  const { handleScroll, showButton } = useHandleScroll();
 
   return (
     <View style={styles.container}>

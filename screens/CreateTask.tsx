@@ -8,9 +8,9 @@ import { useStore } from '../store/useStore';
 import type { ICategories } from '../types/types';
 
 export default function CreateTask() {
-  const userInfo = useStore((state) => state.userInfo);
+  const authInfo = useStore((state) => state.authInfo);
 
-  const [categories, loading, error] = useCollectionOnce(queryCategories(userInfo?.uid as string));
+  const [categories, loading, error] = useCollectionOnce(queryCategories(authInfo?.uid as string));
 
   const categoriesData = useFormatData<ICategories[]>(categories);
 
