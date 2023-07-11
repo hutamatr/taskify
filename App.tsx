@@ -17,6 +17,7 @@ import Text from './components/ui/Text';
 import HomeTabsNavigation from './navigation/HomeTabsNavigation';
 import CategoriesDetail from './screens/CategoriesDetail';
 import CreateTask from './screens/CreateTask';
+import EditProfile from './screens/EditProfile';
 import EditTask from './screens/EditTask';
 import SignIn from './screens/SignIn';
 import SignUp from './screens/SignUp';
@@ -45,14 +46,15 @@ export default function App() {
   const [initializing, setInitializing] = useState(true);
   const [isAuth, setIsAuth] = useState<boolean>(false);
 
-  const [fontsLoaded] = useFonts(customFonts);
   const authHandler = useStore((state) => state.authHandler);
+
+  const [fontsLoaded] = useFonts(customFonts);
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged((user) => {
       if (user) {
-        setIsAuth(!!user.uid);
         authHandler(user);
+        setIsAuth(!!user.uid);
       } else {
         setIsAuth(false);
       }
@@ -60,7 +62,7 @@ export default function App() {
         setInitializing(false);
       }
     });
-    return () => subscriber(); // unsubscribe on unmount
+    return subscriber; // unsubscribe on unmount
   }, []);
 
   if (!fontsLoaded || initializing) {
@@ -122,6 +124,16 @@ export default function App() {
                 <Stack.Screen
                   name="CategoriesDetail"
                   component={CategoriesDetail}
+                  options={{
+                    headerShadowVisible: false,
+                    headerStyle: { backgroundColor: theme.colors.inversePrimary },
+                    statusBarStyle: 'dark',
+                    statusBarColor: theme.colors.inversePrimary,
+                  }}
+                />
+                <Stack.Screen
+                  name="EditProfile"
+                  component={EditProfile}
                   options={{
                     headerShadowVisible: false,
                     headerStyle: { backgroundColor: theme.colors.inversePrimary },
