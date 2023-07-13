@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": "18"
+    "node": ">= 16"
   },
   "scripts": {
     "dev-start": "expo start --dev-client --clear",
@@ -29,6 +29,7 @@
     "@react-navigation/native-stack": "^6.9.12",
     "@skillnation/react-native-firebase-hooks": "^0.5.0",
     "expo": "~48.0.18",
+    "expo-build-properties": "~0.6.0",
     "expo-dev-client": "~2.2.1",
     "expo-font": "~11.1.1",
     "expo-splash-screen": "~0.18.2",
@@ -47,7 +48,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@types/react": "~18.0.14",
+    "@types/react": "~18.0.27",
     "@typescript-eslint/eslint-plugin": "^5.60.0",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
