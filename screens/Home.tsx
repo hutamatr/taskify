@@ -17,6 +17,7 @@ import type { HomeNavigationProp, ICategories, ITask, IUser } from '../types/typ
 
 export default function Home() {
   const { handleScroll, showButton } = useHandleScroll();
+  const navigation = useNavigation<HomeNavigationProp>();
 
   const { authInfo, getAllTasks, getAllCategories, retrieveUser } = useStore(
     (state) => ({
@@ -27,27 +28,25 @@ export default function Home() {
     }),
     shallow
   );
-  const navigation = useNavigation<HomeNavigationProp>();
 
   const [user, userLoading, _userError] = useCollection(queryUser(authInfo?.uid as string));
-
   const [tasks, taskLoading, taskError] = useCollection(queryTasks(authInfo?.uid as string));
   const [categories, categoriesLoading, categoriesError] = useCollection(
     queryCategories(authInfo?.uid as string)
   );
 
+  const userData = useFormatData<IUser[]>(user)[0];
   const tasksData = useFormatData<ITask[]>(tasks);
   const categoriesData = useFormatData<ICategories[]>(categories);
-  const userData = useFormatData<IUser[]>(user)[0];
 
   useEffect(() => {
+    retrieveUser(userData);
     getAllTasks(tasksData, taskLoading, taskError);
     getAllCategories(categoriesData, categoriesLoading, categoriesError);
-    retrieveUser(userData);
   }, [
+    retrieveUser,
     getAllTasks,
     getAllCategories,
-    retrieveUser,
     tasksData,
     taskLoading,
     taskError,
