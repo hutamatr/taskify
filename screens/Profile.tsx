@@ -3,24 +3,28 @@ import { useCollection } from '@skillnation/react-native-firebase-hooks/firestor
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Snackbar } from 'react-native-paper';
+import { shallow } from 'zustand/shallow';
 
 import { queryUser } from '../api/api';
 import ProfileHeader from '../components/profile-screen/ProfileHeader';
 import ProfileList from '../components/profile-screen/ProfileList';
 import Loading from '../components/ui/Loading';
+import Text from '../components/ui/Text';
 import useFormatData from '../hooks/useFormatData';
 import useSnackbar from '../hooks/useSnackbar';
 import { useStore } from '../store/useStore';
-import type { ProfileScreenRouteProp } from '../types/types';
-import { IUser } from '../types/types';
+import type { IUser, ProfileScreenRouteProp } from '../types/types';
 
 export default function Profile() {
-  const authInfo = useStore((state) => state.authInfo);
+  const { authInfo, setProfileStatus } = useStore(
+    (state) => ({ authInfo: state.authInfo, setProfileStatus: state.setProfileStatusHandler }),
+    shallow
+  );
 
   const route = useRoute<ProfileScreenRouteProp>();
   const { visible, setVisible, onDismissSnackBar } = useSnackbar();
 
-  const [user, userLoading, _userError] = useCollection(queryUser(authInfo?.uid as string));
+  const [user, userLoading, userError] = useCollection(queryUser(authInfo?.uid as string));
   const userData = useFormatData<IUser[]>(user)[0];
 
   useEffect(() => {
@@ -29,10 +33,20 @@ export default function Profile() {
     }
   }, [route.params]);
 
+  const onDismissSnackBarHandler = () => {
+    onDismissSnackBar();
+    setProfileStatus('idle');
+  };
+
   return (
     <View style={styles.container}>
       {userLoading && <Loading size="large" />}
-      {!userLoading && userData && (
+      {userError && (
+        <Text fontType="medium" style={styles.error} variant="headlineSmall">
+          Failed view profile!
+        </Text>
+      )}
+      {!userLoading && !userError && userData && (
         <>
           <ProfileHeader username={userData.username} />
           <ProfileList username={userData.username} email={userData.email} />
@@ -40,12 +54,12 @@ export default function Profile() {
       )}
       <Snackbar
         visible={visible}
-        onDismiss={onDismissSnackBar}
+        onDismiss={onDismissSnackBarHandler}
         duration={5000}
         action={{
           label: 'Ok',
           onPress: () => {
-            onDismissSnackBar();
+            onDismissSnackBarHandler();
           },
         }}
       >
@@ -58,5 +72,10 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  error: {
+    textAlign: 'center',
+    margin: 24,
+    color: 'red',
   },
 });
