@@ -14,6 +14,7 @@ export interface ICategoriesSlice {
   ) => void;
   addCategoryHandler: (category: ICategories) => void;
   deleteCategoryHandler: (categoryId: string, isDeleteWithTasks: boolean, userId: string) => void;
+  setCategoriesStatusHandler: (status: 'idle' | 'pending' | 'successful' | 'rejected') => void;
 }
 
 export const categoriesSlice: StateCreator<ICategoriesSlice, [], [], ICategoriesSlice> = (set) => ({
@@ -25,8 +26,16 @@ export const categoriesSlice: StateCreator<ICategoriesSlice, [], [], ICategories
       (state) => ({
         ...state,
         categories: categories,
-        categoriesStatus: loading === true ? 'pending' : 'idle',
-        categoriesError: { error: error, errorMessage: '' },
+        categoriesStatus: loading
+          ? 'pending'
+          : categories
+          ? 'successful'
+          : error
+          ? 'rejected'
+          : 'idle',
+        categoriesError: error
+          ? { error: error, errorMessage: 'Failed get all categories!' }
+          : { error: undefined, errorMessage: '' },
       }),
       true
     );
@@ -41,31 +50,26 @@ export const categoriesSlice: StateCreator<ICategoriesSlice, [], [], ICategories
       set({ categoriesStatus: 'successful' });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      if (error.code) {
-        switch (error.code) {
-          case 'permission-denied':
-            set({
-              categoriesStatus: 'rejected',
-              categoriesError: { error: error, errorMessage: 'Permission denied!' },
-            });
-            break;
-          case 'unauthenticated':
-            set({
-              categoriesStatus: 'rejected',
-              categoriesError: { error: error, errorMessage: 'Your not authenticated!' },
-            });
-            break;
-        }
-      } else {
-        set({
-          categoriesStatus: 'rejected',
-          categoriesError: error,
-        });
+      switch (error.code) {
+        case 'permission-denied':
+          set({
+            categoriesStatus: 'rejected',
+            categoriesError: { error: error, errorMessage: 'Permission denied!' },
+          });
+          break;
+        case 'unauthenticated':
+          set({
+            categoriesStatus: 'rejected',
+            categoriesError: { error: error, errorMessage: 'Your not authenticated!' },
+          });
+          break;
+        default:
+          set({
+            categoriesStatus: 'rejected',
+            categoriesError: { error: error, errorMessage: 'Failed add new category!' },
+          });
+          break;
       }
-    } finally {
-      setTimeout(() => {
-        set({ categoriesStatus: 'idle' });
-      }, 1500);
     }
   },
   deleteCategoryHandler: async (categoryId, isDeleteWithTasks, userId) => {
@@ -82,31 +86,29 @@ export const categoriesSlice: StateCreator<ICategoriesSlice, [], [], ICategories
       set({ categoriesStatus: 'successful' });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      if (error.code) {
-        switch (error.code) {
-          case 'permission-denied':
-            set({
-              categoriesStatus: 'rejected',
-              categoriesError: { error: error, errorMessage: 'Permission denied!' },
-            });
-            break;
-          case 'unauthenticated':
-            set({
-              categoriesStatus: 'rejected',
-              categoriesError: { error: error, errorMessage: 'Your not authenticated!' },
-            });
-            break;
-        }
-      } else {
-        set({
-          categoriesStatus: 'rejected',
-          categoriesError: error,
-        });
+      switch (error.code) {
+        case 'permission-denied':
+          set({
+            categoriesStatus: 'rejected',
+            categoriesError: { error: error, errorMessage: 'Permission denied!' },
+          });
+          break;
+        case 'unauthenticated':
+          set({
+            categoriesStatus: 'rejected',
+            categoriesError: { error: error, errorMessage: 'Your not authenticated!' },
+          });
+          break;
+        default:
+          set({
+            categoriesStatus: 'rejected',
+            categoriesError: { error: error, errorMessage: 'Failed delete category!' },
+          });
+          break;
       }
-    } finally {
-      setTimeout(() => {
-        set({ categoriesStatus: 'idle' });
-      }, 1500);
     }
+  },
+  setCategoriesStatusHandler: (status) => {
+    set({ categoriesStatus: status });
   },
 });

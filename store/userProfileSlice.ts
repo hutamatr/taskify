@@ -10,11 +10,12 @@ type AuthError = FirebaseAuthTypes.NativeFirebaseAuthError;
 export interface IUserProfileSlice {
   userProfile: IUser | undefined;
   profileStatus: 'idle' | 'pending' | 'successful' | 'rejected';
-  profileError: AuthError | undefined;
+  profileError: { error: AuthError | undefined; errorMessage: string };
   updateEmailHandler: (email: string, currentPassword: string) => void;
   updatePasswordHandler: (currentPassword: string, newPassword: string) => void;
   updateProfileHandler: (profile: IProfile) => void;
   retrieveUserProfileHandler: (user: IUser) => void;
+  setProfileStatusHandler: (status: 'idle' | 'pending' | 'successful' | 'rejected') => void;
 }
 
 export const userProfileSlice: StateCreator<IUserProfileSlice, [], [], IUserProfileSlice> = (
@@ -23,7 +24,7 @@ export const userProfileSlice: StateCreator<IUserProfileSlice, [], [], IUserProf
 ) => ({
   userProfile: undefined,
   profileStatus: 'idle',
-  profileError: undefined,
+  profileError: { error: undefined, errorMessage: '' },
   updateEmailHandler: async (email, currentPassword) => {
     set({ profileStatus: 'pending', profileError: undefined });
     try {
@@ -31,12 +32,34 @@ export const userProfileSlice: StateCreator<IUserProfileSlice, [], [], IUserProf
       await reAuth?.user.updateEmail(email);
       await usersColRef.doc(get().userProfile?.id).update({ email: email });
       set({ profileStatus: 'successful' });
-    } catch (error) {
-      set({ profileStatus: 'rejected', profileError: error as AuthError });
-    } finally {
-      setTimeout(() => {
-        set({ profileStatus: 'idle' });
-      }, 1500);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      switch (error.code) {
+        case 'auth/wrong-password':
+          set({
+            profileStatus: 'rejected',
+            profileError: { error: error, errorMessage: 'Password is invalid!' },
+          });
+          break;
+        case 'auth/invalid-email':
+          set({
+            profileStatus: 'rejected',
+            profileError: { error: error, errorMessage: 'Email address is invalid!' },
+          });
+          break;
+        case 'auth/user-not-found':
+          set({
+            profileStatus: 'rejected',
+            profileError: { error: error, errorMessage: 'User Not Found!' },
+          });
+          break;
+        default:
+          set({
+            profileStatus: 'rejected',
+            profileError: { error: error, errorMessage: 'Failed sign in account!' },
+          });
+          break;
+      }
     }
   },
   updatePasswordHandler: async (currentPassword, newPassword) => {
@@ -46,11 +69,10 @@ export const userProfileSlice: StateCreator<IUserProfileSlice, [], [], IUserProf
       await reAuth?.user.updatePassword(newPassword);
       set({ profileStatus: 'successful' });
     } catch (error) {
-      set({ profileStatus: 'rejected', profileError: error as AuthError });
-    } finally {
-      setTimeout(() => {
-        set({ profileStatus: 'idle' });
-      }, 1500);
+      set({
+        profileStatus: 'rejected',
+        profileError: { error: error as AuthError, errorMessage: 'Failed update password!' },
+      });
     }
   },
   updateProfileHandler: async ({ displayName }) => {
@@ -65,14 +87,16 @@ export const userProfileSlice: StateCreator<IUserProfileSlice, [], [], IUserProf
         throw new Error('No user is logged in');
       }
     } catch (error) {
-      set({ profileStatus: 'rejected', profileError: error as AuthError });
-    } finally {
-      setTimeout(() => {
-        set({ profileStatus: 'idle' });
-      }, 1500);
+      set({
+        profileStatus: 'rejected',
+        profileError: { error: error as AuthError, errorMessage: 'Failed update profile!' },
+      });
     }
   },
   retrieveUserProfileHandler: (user) => {
     set({ userProfile: user });
+  },
+  setProfileStatusHandler: (status) => {
+    set({ profileStatus: status });
   },
 });

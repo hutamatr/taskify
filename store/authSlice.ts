@@ -12,7 +12,7 @@ export interface IAuthSlice {
   signInHandler: (user: IAuth) => void;
   SignOutHandler: () => void;
   authHandler: (user: FirebaseAuthTypes.User | null) => void;
-  setStatusHandler: () => void;
+  setAuthStatusHandler: (status: 'idle' | 'pending' | 'successful' | 'rejected') => void;
 }
 
 export const authSlice: StateCreator<IAuthSlice, [], [], IAuthSlice> = (set) => ({
@@ -37,32 +37,38 @@ export const authSlice: StateCreator<IAuthSlice, [], [], IAuthSlice> = (set) => 
         set({ authStatus: 'successful' });
       })
       .catch((error) => {
-        if (error.code === 'auth/email-already-in-use') {
-          set({
-            authStatus: 'rejected',
-            authError: { error: error, errorMessage: 'Email address is already in use!' },
-          });
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            set({
+              authStatus: 'rejected',
+              authError: { error: error, errorMessage: 'Email address is already in use!' },
+            });
+            break;
+          case 'auth/invalid-email':
+            set({
+              authStatus: 'rejected',
+              authError: { error: error, errorMessage: 'Email address is invalid!' },
+            });
+            break;
+          case 'auth/weak-password':
+            set({
+              authStatus: 'rejected',
+              authError: {
+                error: error,
+                errorMessage: 'Password must be 8 characters long or more',
+              },
+            });
+            break;
+          default:
+            set({
+              authStatus: 'rejected',
+              authError: {
+                error: error,
+                errorMessage: 'Failed sign up account!',
+              },
+            });
+            break;
         }
-        if (error.code === 'auth/invalid-email') {
-          set({
-            authStatus: 'rejected',
-            authError: { error: error, errorMessage: 'Email address is invalid!' },
-          });
-        }
-        if (error.code === 'auth/weak-password') {
-          set({
-            authStatus: 'rejected',
-            authError: {
-              error: error,
-              errorMessage: 'Password must be 8 characters long or more',
-            },
-          });
-        }
-      })
-      .finally(() => {
-        setTimeout(() => {
-          set({ authStatus: 'idle' });
-        }, 1500);
       });
   },
   signInHandler: ({ email, password }) => {
@@ -73,56 +79,52 @@ export const authSlice: StateCreator<IAuthSlice, [], [], IAuthSlice> = (set) => 
         set({ authStatus: 'successful', authInfo: user.user });
       })
       .catch((error) => {
-        if (error.code === 'auth/wrong-password') {
-          set({
-            authStatus: 'rejected',
-            authError: { error: error, errorMessage: 'Password is invalid!' },
-          });
+        switch (error.code) {
+          case 'auth/wrong-password':
+            set({
+              authStatus: 'rejected',
+              authError: { error: error, errorMessage: 'Password is invalid!' },
+            });
+            break;
+          case 'auth/invalid-email':
+            set({
+              authStatus: 'rejected',
+              authError: { error: error, errorMessage: 'Email address is invalid!' },
+            });
+            break;
+          case 'auth/user-not-found':
+            set({
+              authStatus: 'rejected',
+              authError: { error: error, errorMessage: 'User Not Found!' },
+            });
+            break;
+          default:
+            set({
+              authStatus: 'rejected',
+              authError: { error: error, errorMessage: 'Failed sign in account!' },
+            });
+            break;
         }
-        if (error.code === 'auth/invalid-email') {
-          set({
-            authStatus: 'rejected',
-            authError: { error: error, errorMessage: 'Email address is invalid!' },
-          });
-        }
-        if (error.code === 'auth/user-not-found') {
-          set({
-            authStatus: 'rejected',
-            authError: { error: error, errorMessage: 'User Not Found!' },
-          });
-        }
+      });
+  },
+  SignOutHandler: () => {
+    set({ authStatus: 'pending', authError: { error: undefined, errorMessage: '' } });
+    auth()
+      .signOut()
+      .then(() => {
+        set({ authStatus: 'successful' });
       })
-      .finally(() => {
-        setTimeout(() => {
-          set({ authStatus: 'idle' });
-        }, 1500);
+      .catch((error) => {
+        set({
+          authStatus: 'rejected',
+          authError: { error: error, errorMessage: 'Failed sign out!' },
+        });
       });
   },
   authHandler: (user) => {
     set((state) => ({ ...state, authInfo: user }), true);
   },
-  SignOutHandler: async () => {
-    try {
-      set({
-        authStatus: 'pending',
-        authError: { error: undefined, errorMessage: '' },
-      });
-      await auth().signOut();
-      set({ authStatus: 'successful' });
-    } catch (error) {
-      if (error instanceof Error) {
-        set({
-          authStatus: 'rejected',
-          authError: { error: error, errorMessage: 'Failed sign out!' },
-        });
-      }
-    } finally {
-      setTimeout(() => {
-        set({ authStatus: 'idle' });
-      }, 1500);
-    }
-  },
-  setStatusHandler: () => {
-    set({ authStatus: 'idle', authError: { error: undefined, errorMessage: '' } });
+  setAuthStatusHandler: (status) => {
+    set({ authStatus: status });
   },
 });
