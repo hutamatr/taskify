@@ -31,7 +31,7 @@ export default function Tasks() {
         </Text>
       </View>
       <RecentTasks tasks={tasks} isLoading={tasksStatus === 'pending'} error={tasksError?.error} />
-      {tasks.length > 0 && (
+      {tasks?.length > 0 && (
         <View style={styles.buttonContainer}>
           <Button
             mode="text"

@@ -10,7 +10,7 @@ export default function Categories() {
   const navigation = useNavigation<CategoriesNavigationProp>();
 
   const showAllCategoriesHandler = () => {
-    navigation.navigate('Categories');
+    navigation.navigate('Categories', { snackbarShow: false });
   };
 
   return (

@@ -18,15 +18,15 @@ export const categoriesColRef = db.collection(collectionCategories);
 export const queryTasks = (userId: string) => {
   return tasksColRef.where('userId', '==', userId);
 };
-export const queryTasksCompleted = (userId: string) => {
-  return tasksColRef.where('isCompleted', '==', true).where('userId', '==', userId);
-};
-export const queryTasksInProgress = (userId: string) => {
-  return tasksColRef.where('isCompleted', '==', false).where('userId', '==', userId);
-};
-export const queryTasksByCategory = (userId: string, categoryId: string) => {
-  return tasksColRef.where('categoryId', '==', categoryId).where('userId', '==', userId);
-};
+// export const queryTasksCompleted = (userId: string) => {
+//   return tasksColRef.where('isCompleted', '==', true).where('userId', '==', userId);
+// };
+// export const queryTasksInProgress = (userId: string) => {
+//   return tasksColRef.where('isCompleted', '==', false).where('userId', '==', userId);
+// };
+// export const queryTasksByCategory = (userId: string, categoryId: string) => {
+//   return tasksColRef.where('categoryId', '==', categoryId).where('userId', '==', userId);
+// };
 export const queryCategories = (userId: string) => {
   return categoriesColRef.where('userId', '==', userId);
 };

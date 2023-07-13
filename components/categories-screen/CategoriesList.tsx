@@ -40,7 +40,7 @@ export default function CategoriesList({
       {isLoading && <Loading size="large" />}
       {error && (
         <Text fontType="medium" style={styles.error} variant="headlineSmall">
-          {error.message}
+          Failed view categories list!
         </Text>
       )}
       {!isLoading && !error && categories?.length === 0 && (
@@ -52,6 +52,7 @@ export default function CategoriesList({
       )}
       {!isLoading && !error && categories && categories.length > 0 && (
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={formatList(categories, numColumns)}
           renderItem={({ item }) => {
             if (!item.name) {
@@ -66,7 +67,7 @@ export default function CategoriesList({
             return (
               <CategoriesItem
                 {...item}
-                mode="contained"
+                mode={undefined}
                 style={styles.categoriesItem}
                 textVariant="titleMedium"
                 onPress={viewCategoriesDetailHandler.bind(null, item)}
@@ -90,9 +91,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   listContainer: {
-    marginHorizontal: 16,
-    marginTop: 24,
-    marginBottom: 150,
+    marginHorizontal: 8,
+    marginTop: 8,
+    marginBottom: 84,
   },
   row: {
     margin: 4,
