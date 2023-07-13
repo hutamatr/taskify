@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { shallow } from 'zustand/shallow';
 
+import DialogView from '../ui/DialogView';
 import useInputState from '../../hooks/useInputState';
 import useValidation from '../../hooks/useValidation';
 import { useStore } from '../../store/useStore';
@@ -28,13 +29,21 @@ export default function EditProfileForm({ profileWantEdit }: IEditProfileFormPro
 
   const { passwordValidation } = useValidation();
 
-  const { userProfile, updateUsername, updateEmail, profileStatus } = useStore(
+  const {
+    userProfile,
+    updateUsername,
+    updateEmail,
+    profileStatus,
+    profileError,
+    setProfileStatus,
+  } = useStore(
     (state) => ({
       updateUsername: state.updateProfileHandler,
       updateEmail: state.updateEmailHandler,
       userProfile: state.userProfile,
       profileStatus: state.profileStatus,
       profileError: state.profileError,
+      setProfileStatus: state.setProfileStatusHandler,
     }),
     shallow
   );
@@ -54,14 +63,16 @@ export default function EditProfileForm({ profileWantEdit }: IEditProfileFormPro
   }, [profileInput['password']]);
 
   useEffect(() => {
-    if (profileStatus === 'successful') {
-      navigation.navigate('Profile', {
-        snackbarShow: true,
-        message:
-          profileWantEdit === 'email'
-            ? 'updated email successfully'
-            : 'updated username successfully',
-      });
+    switch (profileStatus) {
+      case 'successful':
+        navigation.navigate('Profile', {
+          snackbarShow: true,
+          message:
+            profileWantEdit === 'email'
+              ? 'updated email successfully'
+              : 'updated username successfully',
+        });
+        break;
     }
   }, [profileStatus, navigation]);
 
@@ -80,6 +91,8 @@ export default function EditProfileForm({ profileWantEdit }: IEditProfileFormPro
       }
     }
   };
+
+  const onDismissDialog = () => setProfileStatus('idle');
 
   return (
     <View style={styles.container}>
@@ -115,6 +128,12 @@ export default function EditProfileForm({ profileWantEdit }: IEditProfileFormPro
       >
         Submit
       </Button>
+      <DialogView
+        dialogTitle={`Failed edit ${profileWantEdit}`}
+        message={profileError?.errorMessage}
+        visible={profileStatus === 'rejected'}
+        onDismiss={onDismissDialog}
+      />
     </View>
   );
 }
