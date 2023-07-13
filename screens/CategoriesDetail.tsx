@@ -1,20 +1,16 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useCollection } from '@skillnation/react-native-firebase-hooks/firestore';
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
 import { Alert, GestureResponderEvent, StyleSheet, View } from 'react-native';
 import { Menu } from 'react-native-paper';
 import { shallow } from 'zustand/shallow';
 
-import { queryTasksByCategory } from '../api/api';
 import TasksList from '../components/all-tasks-screen/TasksList';
 import Text from '../components/ui/Text';
-import useFormatData from '../hooks/useFormatData';
 import { useStore } from '../store/useStore';
 import type {
   CategoriesDetailNavigationProp,
   CategoriesDetailScreenRouteProp,
-  ITask,
 } from '../types/types';
 
 export default function CategoriesDetail() {
@@ -23,19 +19,28 @@ export default function CategoriesDetail() {
   const route = useRoute<CategoriesDetailScreenRouteProp>();
   const navigation = useNavigation<CategoriesDetailNavigationProp>();
 
-  const { authInfo, deleteCategory } = useStore(
+  const { authInfo, tasks, tasksStatus, tasksError, deleteCategory } = useStore(
     (state) => ({
       authInfo: state.authInfo,
+      tasks: state.tasks,
+      tasksStatus: state.tasksStatus,
+      tasksError: state.tasksError,
       deleteCategory: state.deleteCategoryHandler,
     }),
     shallow
   );
+  // const [taskByCategory, taskByCategoryLoading, taskByCategoryError] = useCollection(
+  //   queryTasksByCategory(authInfo?.uid as string, route.params.id as string)
+  // );
 
-  const [taskByCategory, taskByCategoryLoading, taskByCategoryError] = useCollection(
-    queryTasksByCategory(authInfo?.uid as string, route.params.id as string)
-  );
+  // const taskByCategoryData = useFormatData<ITask[]>(taskByCategory);
 
-  const taskByCategoryData = useFormatData<ITask[]>(taskByCategory);
+  const tasksByCategory = useMemo(() => {
+    const tasksCategory = tasks
+      .filter((task) => task.categoryId === route.params.id)
+      .sort((a, b) => +new Date(b.date as string) - +new Date(a.date as string));
+    return tasksCategory;
+  }, [tasks, route.params]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -71,7 +76,7 @@ export default function CategoriesDetail() {
   };
 
   const deleteCategoryHandler = () => {
-    if (taskByCategoryData.length === 0) {
+    if (tasksByCategory?.length === 0) {
       Alert.alert('Confirm Delete', 'Are you sure you want to delete this category?', [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -111,9 +116,9 @@ export default function CategoriesDetail() {
   return (
     <View style={styles.container}>
       <TasksList
-        tasks={taskByCategoryData}
-        isLoading={taskByCategoryLoading}
-        error={taskByCategoryError}
+        tasks={tasksByCategory}
+        isLoading={tasksStatus === 'pending'}
+        error={tasksError?.error}
       />
       <Menu visible={visible} onDismiss={closeMenu} anchor={menuAnchor}>
         <Menu.Item onPress={deleteCategoryHandler} title="Delete" leadingIcon="delete" />
