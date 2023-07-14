@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "task-manager-app",
+    "name": "taskify",
     "slug": "task-manager-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.hutamatr.taskmanagerapp"
@@ -32,6 +30,22 @@
       "eas": {
         "projectId": "1b51b49d-5e70-4210-89a6-f3f1b022d8f5"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "buildToolsVersion": "33.0.0",
+            "minSdkVersion": 21,
+            "compileSdkVersion": 33,
+            "targetSdkVersion": 33
+          },
+          "ios": {
+            "deploymentTarget": "13.0"
+          }
+        }
+      ]
+    ]
   }
 }

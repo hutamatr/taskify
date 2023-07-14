@@ -116,6 +116,7 @@ export default function AuthForm({ isSignIn, isLoading, onSubmit }: IAuthForm) {
           keyboardType="email-address"
           autoComplete="email"
           autoCapitalize="none"
+          importantForAutofill="yes"
           value={email}
           error={credentialsForm.email && email ? false : !!email}
         />
@@ -127,6 +128,7 @@ export default function AuthForm({ isSignIn, isLoading, onSubmit }: IAuthForm) {
             secureTextEntry={!isPasswordView}
             autoCorrect={false}
             autoCapitalize="none"
+            importantForAutofill="yes"
             value={password}
             error={credentialsForm.password && password ? false : !!password}
             right={

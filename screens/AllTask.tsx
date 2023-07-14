@@ -1,18 +1,16 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useCollection } from '@skillnation/react-native-firebase-hooks/firestore';
 import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { AnimatedFAB, Snackbar } from 'react-native-paper';
+import { shallow } from 'zustand/shallow';
 
-import { queryTasksCompleted, queryTasksInProgress } from '../api/api';
 import TasksFilter from '../components/all-tasks-screen/TasksFilter';
 import TasksHeader from '../components/all-tasks-screen/TasksHeader';
 import TasksList from '../components/all-tasks-screen/TasksList';
-import useFormatData from '../hooks/useFormatData';
 import useHandleScroll from '../hooks/useHandleScroll';
 import useSnackbar from '../hooks/useSnackbar';
 import { useStore } from '../store/useStore';
-import type { ITask, TasksNavigationProp, TasksScreenRouteProp } from '../types/types';
+import type { TasksNavigationProp, TasksScreenRouteProp } from '../types/types';
 
 export default function AllTask() {
   const [isCompletedView, setIsCompletedView] = useState(false);
@@ -21,31 +19,39 @@ export default function AllTask() {
   const { visible, setVisible, onDismissSnackBar } = useSnackbar();
   const navigation = useNavigation<TasksNavigationProp>();
   const route = useRoute<TasksScreenRouteProp>();
-  const authInfo = useStore((state) => state.authInfo);
-
-  const [tasksCompleted, completedIsLoading, completedError] = useCollection(
-    queryTasksCompleted(authInfo?.uid as string)
+  const { tasks, tasksStatus, tasksError, setTasksStatus } = useStore(
+    (state) => ({
+      tasks: state.tasks,
+      tasksStatus: state.tasksStatus,
+      tasksError: state.tasksError,
+      setTasksStatus: state.setTasksStatusHandler,
+    }),
+    shallow
   );
-  const [tasksInProgress, progressIsLoading, progressError] = useCollection(
-    queryTasksInProgress(authInfo?.uid as string)
-  );
 
-  const tasksCompletedData = useFormatData<ITask[]>(tasksCompleted);
-  const tasksInProgressData = useFormatData<ITask[]>(tasksInProgress);
+  // const [tasksCompleted, completedIsLoading, completedError] = useCollection(
+  //   queryTasksCompleted(authInfo?.uid as string)
+  // );
+  // const [tasksInProgress, progressIsLoading, progressError] = useCollection(
+  //   queryTasksInProgress(authInfo?.uid as string)
+  // );
+
+  // const tasksCompletedData = useFormatData<ITask[]>(tasksCompleted);
+  // const tasksInProgressData = useFormatData<ITask[]>(tasksInProgress);
 
   const tasksCompletedSort = useMemo(() => {
-    const taskSorted = [...tasksCompletedData].sort(
-      (a, b) => +new Date(b.date as string) - +new Date(a.date as string)
-    );
+    const taskSorted = tasks
+      .filter((task) => task.isCompleted)
+      .sort((a, b) => +new Date(b.date as string) - +new Date(a.date as string));
     return taskSorted;
-  }, [tasksCompletedData]);
+  }, [tasks]);
 
   const tasksInProgressSort = useMemo(() => {
-    const taskSorted = [...tasksInProgressData].sort(
-      (a, b) => +new Date(b.date as string) - +new Date(a.date as string)
-    );
+    const taskSorted = tasks
+      .filter((task) => !task.isCompleted)
+      .sort((a, b) => +new Date(b.date as string) - +new Date(a.date as string));
     return taskSorted;
-  }, [tasksInProgressData]);
+  }, [tasks]);
 
   useEffect(() => {
     if (route.params?.snackbarShow) {
@@ -55,6 +61,7 @@ export default function AllTask() {
 
   const createNewTaskHandler = () => {
     navigation.navigate('CreateTask');
+    setTasksStatus('idle');
   };
 
   const inProgressFilterHandler = () => {
@@ -63,6 +70,11 @@ export default function AllTask() {
 
   const completedFilterHandler = () => {
     setIsCompletedView(true);
+  };
+
+  const onDismissSnackBarHandler = () => {
+    onDismissSnackBar();
+    setTasksStatus('idle');
   };
 
   return (
@@ -76,8 +88,8 @@ export default function AllTask() {
       <TasksList
         onScroll={handleScroll}
         tasks={isCompletedView ? tasksCompletedSort : tasksInProgressSort}
-        isLoading={isCompletedView ? completedIsLoading : progressIsLoading}
-        error={isCompletedView ? completedError : progressError}
+        isLoading={tasksStatus === 'pending'}
+        error={tasksError?.error}
         style={{ marginBottom: 150 }}
       />
       <AnimatedFAB
@@ -93,12 +105,12 @@ export default function AllTask() {
       />
       <Snackbar
         visible={visible}
-        onDismiss={onDismissSnackBar}
+        onDismiss={onDismissSnackBarHandler}
         duration={5000}
         action={{
           label: 'Ok',
           onPress: () => {
-            onDismissSnackBar();
+            onDismissSnackBarHandler();
           },
         }}
       >

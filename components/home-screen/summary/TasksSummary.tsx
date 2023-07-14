@@ -33,7 +33,7 @@ export default function TasksSummary() {
         {tasksStatus !== 'pending' && tasksStatus !== 'rejected' && (
           <Text
             variant="displayLarge"
-            numberOfLines={2}
+            numberOfLines={1}
             lineBreakMode="tail"
             fontType="semibold"
             style={{ color: theme.colors.primary }}
@@ -41,7 +41,6 @@ export default function TasksSummary() {
             {tasks.length > 99 ? '99+' : tasks.length.toString()}
           </Text>
         )}
-
         <Text variant="displayMedium" numberOfLines={2} lineBreakMode="tail" fontType="medium">
           tasks total
         </Text>

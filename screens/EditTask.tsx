@@ -1,22 +1,31 @@
-import { useCollectionOnce } from '@skillnation/react-native-firebase-hooks/firestore';
 import { StyleSheet, View } from 'react-native';
+import { shallow } from 'zustand/shallow';
 
-import { queryCategories } from '../api/api';
 import TaskForm from '../components/task-form/TaskForm';
-import useFormatData from '../hooks/useFormatData';
 import { useStore } from '../store/useStore';
-import type { ICategories } from '../types/types';
 
 export default function EditTask() {
-  const authInfo = useStore((state) => state.authInfo);
+  const { categories, categoriesStatus, categoriesError } = useStore(
+    (state) => ({
+      categories: state.categories,
+      categoriesStatus: state.categoriesStatus,
+      categoriesError: state.categoriesError,
+    }),
+    shallow
+  );
 
-  const [categories, loading, error] = useCollectionOnce(queryCategories(authInfo?.uid as string));
+  // const [categories, loading, error] = useCollectionOnce(queryCategories(authInfo?.uid as string));
 
-  const categoriesData = useFormatData<ICategories[]>(categories);
+  // const categoriesData = useFormatData<ICategories[]>(categories);
 
   return (
     <View style={styles.container}>
-      <TaskForm categories={categoriesData} isLoading={loading} error={error} isEdit={true} />
+      <TaskForm
+        categories={categories}
+        isLoading={categoriesStatus === 'pending'}
+        error={categoriesError?.error}
+        isEdit={true}
+      />
     </View>
   );
 }

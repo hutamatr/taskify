@@ -8,8 +8,10 @@ import {
 import auth from '@react-native-firebase/auth';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { View } from 'react-native';
 import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 import 'expo-dev-client';
 
@@ -42,8 +44,11 @@ const theme = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+SplashScreen.preventAutoHideAsync();
+
 export default function App() {
   const [initializing, setInitializing] = useState(true);
+  const [appIsReady, setAppIsReady] = useState(false);
   const [isAuth, setIsAuth] = useState<boolean>(false);
 
   const authHandler = useStore((state) => state.authHandler);
@@ -61,9 +66,17 @@ export default function App() {
       if (initializing) {
         setInitializing(false);
       }
+
+      setAppIsReady(true);
     });
     return subscriber; // unsubscribe on unmount
   }, []);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
 
   if (!fontsLoaded || initializing) {
     return null;
@@ -74,103 +87,105 @@ export default function App() {
       <StatusBar style="auto" animated hideTransitionAnimation="fade" />
       <PaperProvider theme={theme}>
         <NavigationContainer>
-          <Stack.Navigator>
-            {isAuth ? (
-              <>
-                <Stack.Screen
-                  name="HomeTabs"
-                  component={HomeTabsNavigation}
-                  options={{
-                    title: '',
-                    headerShadowVisible: false,
-                    headerStyle: { backgroundColor: theme.colors.inversePrimary },
-                    headerShown: false,
-                    statusBarStyle: 'dark',
-                    statusBarColor: theme.colors.inversePrimary,
-                  }}
-                />
-                <Stack.Screen
-                  name="CreateTask"
-                  component={CreateTask}
-                  options={{
-                    title: 'Create Task',
-                    headerShadowVisible: false,
-                    headerTitle: () => (
-                      <Text fontType="regular" variant="headlineSmall">
-                        Create Task
-                      </Text>
-                    ),
-                    headerStyle: { backgroundColor: theme.colors.inversePrimary },
-                    statusBarStyle: 'dark',
-                    statusBarColor: theme.colors.inversePrimary,
-                  }}
-                />
-                <Stack.Screen
-                  name="EditTask"
-                  component={EditTask}
-                  options={{
-                    title: 'Edit Task',
-                    headerShadowVisible: false,
-                    headerTitle: () => (
-                      <Text fontType="regular" variant="headlineSmall">
-                        Edit Task
-                      </Text>
-                    ),
-                    headerStyle: { backgroundColor: theme.colors.inversePrimary },
-                    statusBarStyle: 'dark',
-                    statusBarColor: theme.colors.inversePrimary,
-                  }}
-                />
-                <Stack.Screen
-                  name="CategoriesDetail"
-                  component={CategoriesDetail}
-                  options={{
-                    headerShadowVisible: false,
-                    headerStyle: { backgroundColor: theme.colors.inversePrimary },
-                    statusBarStyle: 'dark',
-                    statusBarColor: theme.colors.inversePrimary,
-                  }}
-                />
-                <Stack.Screen
-                  name="EditProfile"
-                  component={EditProfile}
-                  options={{
-                    headerShadowVisible: false,
-                    headerStyle: { backgroundColor: theme.colors.inversePrimary },
-                    statusBarStyle: 'dark',
-                    statusBarColor: theme.colors.inversePrimary,
-                  }}
-                />
-              </>
-            ) : (
-              <>
-                <Stack.Screen
-                  name="SignIn"
-                  component={SignIn}
-                  options={{
-                    title: '',
-                    headerShadowVisible: false,
-                    headerStyle: { backgroundColor: theme.colors.inversePrimary },
-                    headerShown: false,
-                    statusBarStyle: 'dark',
-                    statusBarColor: theme.colors.inversePrimary,
-                  }}
-                />
-                <Stack.Screen
-                  name="SignUp"
-                  component={SignUp}
-                  options={{
-                    title: '',
-                    headerShadowVisible: false,
-                    headerStyle: { backgroundColor: theme.colors.inversePrimary },
-                    headerShown: false,
-                    statusBarStyle: 'dark',
-                    statusBarColor: theme.colors.inversePrimary,
-                  }}
-                />
-              </>
-            )}
-          </Stack.Navigator>
+          <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+            <Stack.Navigator>
+              {isAuth ? (
+                <>
+                  <Stack.Screen
+                    name="HomeTabs"
+                    component={HomeTabsNavigation}
+                    options={{
+                      title: '',
+                      headerShadowVisible: false,
+                      headerStyle: { backgroundColor: theme.colors.inversePrimary },
+                      headerShown: false,
+                      statusBarStyle: 'dark',
+                      statusBarColor: theme.colors.inversePrimary,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="CreateTask"
+                    component={CreateTask}
+                    options={{
+                      title: 'Create Task',
+                      headerShadowVisible: false,
+                      headerTitle: () => (
+                        <Text fontType="regular" variant="headlineSmall">
+                          Create Task
+                        </Text>
+                      ),
+                      headerStyle: { backgroundColor: theme.colors.inversePrimary },
+                      statusBarStyle: 'dark',
+                      statusBarColor: theme.colors.inversePrimary,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="EditTask"
+                    component={EditTask}
+                    options={{
+                      title: 'Edit Task',
+                      headerShadowVisible: false,
+                      headerTitle: () => (
+                        <Text fontType="regular" variant="headlineSmall">
+                          Edit Task
+                        </Text>
+                      ),
+                      headerStyle: { backgroundColor: theme.colors.inversePrimary },
+                      statusBarStyle: 'dark',
+                      statusBarColor: theme.colors.inversePrimary,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="CategoriesDetail"
+                    component={CategoriesDetail}
+                    options={{
+                      headerShadowVisible: false,
+                      headerStyle: { backgroundColor: theme.colors.inversePrimary },
+                      statusBarStyle: 'dark',
+                      statusBarColor: theme.colors.inversePrimary,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="EditProfile"
+                    component={EditProfile}
+                    options={{
+                      headerShadowVisible: false,
+                      headerStyle: { backgroundColor: theme.colors.inversePrimary },
+                      statusBarStyle: 'dark',
+                      statusBarColor: theme.colors.inversePrimary,
+                    }}
+                  />
+                </>
+              ) : (
+                <>
+                  <Stack.Screen
+                    name="SignIn"
+                    component={SignIn}
+                    options={{
+                      title: '',
+                      headerShadowVisible: false,
+                      headerStyle: { backgroundColor: theme.colors.inversePrimary },
+                      headerShown: false,
+                      statusBarStyle: 'dark',
+                      statusBarColor: theme.colors.inversePrimary,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="SignUp"
+                    component={SignUp}
+                    options={{
+                      title: '',
+                      headerShadowVisible: false,
+                      headerStyle: { backgroundColor: theme.colors.inversePrimary },
+                      headerShown: false,
+                      statusBarStyle: 'dark',
+                      statusBarColor: theme.colors.inversePrimary,
+                    }}
+                  />
+                </>
+              )}
+            </Stack.Navigator>
+          </View>
         </NavigationContainer>
       </PaperProvider>
     </>

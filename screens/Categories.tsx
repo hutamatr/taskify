@@ -1,30 +1,41 @@
 import BottomSheet from '@gorhom/bottom-sheet';
-import { useCollection } from '@skillnation/react-native-firebase-hooks/firestore';
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { AnimatedFAB } from 'react-native-paper';
+import { shallow } from 'zustand/shallow';
 
-import { queryCategories } from '../api/api';
 import CategoriesHeader from '../components/categories-screen/CategoriesHeader';
 import CategoriesList from '../components/categories-screen/CategoriesList';
 import CategoriesForm from '../components/createcategories-screen/CategoriesForm';
-import useFormatData from '../hooks/useFormatData';
 import useHandleScroll from '../hooks/useHandleScroll';
 import { useStore } from '../store/useStore';
-import type { ICategories } from '../types/types';
 
 export default function Categories() {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-  const authInfo = useStore((state) => state.authInfo);
+  const { categories, categoriesStatus, categoriesError } = useStore(
+    (state) => ({
+      categories: state.categories,
+      categoriesStatus: state.categoriesStatus,
+      categoriesError: state.categoriesError,
+    }),
+    shallow
+  );
 
   const { handleScroll, showButton } = useHandleScroll();
 
-  const [categories, categoriesIsLoading, categoriesError] = useCollection(
-    queryCategories(authInfo?.uid as string)
-  );
+  // const [categories, categoriesIsLoading, categoriesError] = useCollection(
+  //   queryCategories(authInfo?.uid as string)
+  // );
 
-  const categoriesData = useFormatData<ICategories[]>(categories);
+  // const categoriesData = useFormatData<ICategories[]>(categories);
+
+  const categoriesSort = useMemo(() => {
+    const categoriesSorted = categories.sort(
+      (a, b) => +new Date(a.createdAt as string) - +new Date(b.createdAt as string)
+    );
+    return categoriesSorted;
+  }, [categories]);
 
   const createNewCategoriesHandler = useCallback((index: number) => {
     bottomSheetRef.current?.snapToIndex(index);
@@ -35,9 +46,9 @@ export default function Categories() {
       <CategoriesHeader />
       <CategoriesList
         onScroll={handleScroll}
-        categories={categoriesData}
-        isLoading={categoriesIsLoading}
-        error={categoriesError}
+        categories={categoriesSort}
+        isLoading={categoriesStatus === 'pending'}
+        error={categoriesError?.error}
       />
       <CategoriesForm bottomSheetRef={bottomSheetRef} />
       <AnimatedFAB

@@ -11,6 +11,7 @@ export interface ITaskSlice {
   addTaskHandler: (task: ITask) => void;
   updateTaskHandler: (task: ITask) => void;
   deleteTaskHandler: (taskId: string) => void;
+  setTasksStatusHandler: (status: 'idle' | 'pending' | 'successful' | 'rejected') => void;
 }
 
 export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) => ({
@@ -18,7 +19,17 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
   tasksStatus: 'idle',
   tasksError: { error: undefined, errorMessage: '' },
   getAllTasksHandler: (tasks, loading, error) => {
-    set((state) => ({ ...state, tasks: tasks, allTasksLoading: loading, error: error }), true);
+    set(
+      (state) => ({
+        ...state,
+        tasks: tasks,
+        categoriesStatus: loading ? 'pending' : tasks ? 'successful' : error ? 'rejected' : 'idle',
+        tasksError: error
+          ? { error: error, errorMessage: 'Failed get all tasks!' }
+          : { error: undefined, errorMessage: '' },
+      }),
+      true
+    );
   },
   addTaskHandler: async (task) => {
     try {
@@ -30,31 +41,26 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
       set({ tasksStatus: 'successful' });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      if (error.code) {
-        switch (error.code) {
-          case 'permission-denied':
-            set({
-              tasksStatus: 'rejected',
-              tasksError: { error: error, errorMessage: 'Permission denied!' },
-            });
-            break;
-          case 'unauthenticated':
-            set({
-              tasksStatus: 'rejected',
-              tasksError: { error: error, errorMessage: 'Your not authenticated!' },
-            });
-            break;
-        }
-      } else {
-        set({
-          tasksStatus: 'rejected',
-          tasksError: error,
-        });
+      switch (error.code) {
+        case 'permission-denied':
+          set({
+            tasksStatus: 'rejected',
+            tasksError: { error: error, errorMessage: 'Permission denied!' },
+          });
+          break;
+        case 'unauthenticated':
+          set({
+            tasksStatus: 'rejected',
+            tasksError: { error: error, errorMessage: 'Your not authenticated!' },
+          });
+          break;
+        default:
+          set({
+            tasksStatus: 'rejected',
+            tasksError: { error: error, errorMessage: 'Failed add new task!' },
+          });
+          break;
       }
-    } finally {
-      setTimeout(() => {
-        set({ tasksStatus: 'idle', tasksError: undefined });
-      }, 1500);
     }
   },
   updateTaskHandler: async (task) => {
@@ -67,31 +73,26 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
       set({ tasksStatus: 'successful' });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      if (error.code) {
-        switch (error.code) {
-          case 'permission-denied':
-            set({
-              tasksStatus: 'rejected',
-              tasksError: { error: error, errorMessage: 'Permission denied!' },
-            });
-            break;
-          case 'unauthenticated':
-            set({
-              tasksStatus: 'rejected',
-              tasksError: { error: error, errorMessage: 'Your not authenticated!' },
-            });
-            break;
-        }
-      } else {
-        set({
-          tasksStatus: 'rejected',
-          tasksError: error,
-        });
+      switch (error.code) {
+        case 'permission-denied':
+          set({
+            tasksStatus: 'rejected',
+            tasksError: { error: error, errorMessage: 'Permission denied!' },
+          });
+          break;
+        case 'unauthenticated':
+          set({
+            tasksStatus: 'rejected',
+            tasksError: { error: error, errorMessage: 'Your not authenticated!' },
+          });
+          break;
+        default:
+          set({
+            tasksStatus: 'rejected',
+            tasksError: { error: error, errorMessage: 'Failed update task!' },
+          });
+          break;
       }
-    } finally {
-      setTimeout(() => {
-        set({ tasksStatus: 'idle', tasksError: undefined });
-      }, 1500);
     }
   },
   deleteTaskHandler: async (taskId) => {
@@ -104,31 +105,29 @@ export const tasksSlice: StateCreator<ITaskSlice, [], [], ITaskSlice> = (set) =>
       set({ tasksStatus: 'successful' });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      if (error.code) {
-        switch (error.code) {
-          case 'permission-denied':
-            set({
-              tasksStatus: 'rejected',
-              tasksError: { error: error, errorMessage: 'Permission denied!' },
-            });
-            break;
-          case 'unauthenticated':
-            set({
-              tasksStatus: 'rejected',
-              tasksError: { error: error, errorMessage: 'Your not authenticated!' },
-            });
-            break;
-        }
-      } else {
-        set({
-          tasksStatus: 'rejected',
-          tasksError: error,
-        });
+      switch (error.code) {
+        case 'permission-denied':
+          set({
+            tasksStatus: 'rejected',
+            tasksError: { error: error, errorMessage: 'Permission denied!' },
+          });
+          break;
+        case 'unauthenticated':
+          set({
+            tasksStatus: 'rejected',
+            tasksError: { error: error, errorMessage: 'Your not authenticated!' },
+          });
+          break;
+        default:
+          set({
+            tasksStatus: 'rejected',
+            tasksError: { error: error, errorMessage: 'Failed delete task!' },
+          });
+          break;
       }
-    } finally {
-      setTimeout(() => {
-        set({ tasksStatus: 'idle', tasksError: undefined });
-      }, 1500);
     }
+  },
+  setTasksStatusHandler: (status) => {
+    set({ tasksStatus: status });
   },
 });
