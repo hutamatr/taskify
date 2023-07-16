@@ -37,8 +37,8 @@ export default function RootNavigation({ isAuth }: IRootNavigationProps) {
                 headerShadowVisible: false,
                 // headerStyle: { backgroundColor: theme.colors.inversePrimary },
                 headerShown: false,
-                // statusBarStyle: 'dark',
-                // statusBarColor: theme.colors.inversePrimary,
+                statusBarStyle: 'auto',
+                statusBarColor: theme.colors.inversePrimary,
               }}
             />
             <Stack.Screen
@@ -53,8 +53,8 @@ export default function RootNavigation({ isAuth }: IRootNavigationProps) {
                   </Text>
                 ),
                 headerStyle: { backgroundColor: theme.colors.inversePrimary },
-                // statusBarStyle: 'dark',
-                // statusBarColor: theme.colors.inversePrimary,
+                statusBarStyle: 'auto',
+                statusBarColor: theme.colors.inversePrimary,
               }}
             />
             <Stack.Screen
@@ -69,8 +69,8 @@ export default function RootNavigation({ isAuth }: IRootNavigationProps) {
                   </Text>
                 ),
                 headerStyle: { backgroundColor: theme.colors.inversePrimary },
-                // statusBarStyle: 'dark',
-                // statusBarColor: theme.colors.inversePrimary,
+                statusBarStyle: 'auto',
+                statusBarColor: theme.colors.inversePrimary,
               }}
             />
             <Stack.Screen
@@ -79,8 +79,8 @@ export default function RootNavigation({ isAuth }: IRootNavigationProps) {
               options={{
                 headerShadowVisible: false,
                 headerStyle: { backgroundColor: theme.colors.inversePrimary },
-                // statusBarStyle: 'dark',
-                // statusBarColor: theme.colors.inversePrimary,
+                statusBarStyle: 'auto',
+                statusBarColor: theme.colors.inversePrimary,
               }}
             />
             <Stack.Screen
@@ -89,8 +89,8 @@ export default function RootNavigation({ isAuth }: IRootNavigationProps) {
               options={{
                 headerShadowVisible: false,
                 headerStyle: { backgroundColor: theme.colors.inversePrimary },
-                // statusBarStyle: 'dark',
-                // statusBarColor: theme.colors.inversePrimary,
+                statusBarStyle: 'auto',
+                statusBarColor: theme.colors.inversePrimary,
               }}
             />
           </>
@@ -104,8 +104,8 @@ export default function RootNavigation({ isAuth }: IRootNavigationProps) {
                 headerShadowVisible: false,
                 headerShown: false,
                 headerStyle: { backgroundColor: theme.colors.inversePrimary },
-                // statusBarStyle: 'dark',
-                // statusBarColor: theme.colors.inversePrimary,
+                statusBarStyle: 'auto',
+                statusBarColor: theme.colors.inversePrimary,
               }}
             />
             <Stack.Screen
@@ -116,8 +116,8 @@ export default function RootNavigation({ isAuth }: IRootNavigationProps) {
                 headerShadowVisible: false,
                 // headerStyle: { backgroundColor: theme.colors.inversePrimary },
                 headerShown: false,
-                // statusBarStyle: 'dark',
-                // statusBarColor: theme.colors.inversePrimary,
+                statusBarStyle: 'auto',
+                statusBarColor: theme.colors.inversePrimary,
               }}
             />
           </>

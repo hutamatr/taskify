@@ -13,8 +13,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useColorScheme, View } from 'react-native';
+import { useColorScheme } from 'react-native';
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import RootNavigation from '@navigation/RootNavigation';
 
@@ -27,11 +28,6 @@ const customFonts = {
   'plus-jakarta-sans-semibold': PlusJakartaSans_600SemiBold,
 };
 
-const colors = {
-  light: '#3E8260',
-  dark: '#ADF2C7',
-};
-
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -41,7 +37,7 @@ export default function App() {
 
   const colorScheme = useColorScheme();
   const { theme } = useMaterial3Theme({
-    fallbackSourceColor: colors.light,
+    fallbackSourceColor: '#0277BD ',
   });
 
   const paperTheme = useMemo(
@@ -88,9 +84,9 @@ export default function App() {
       <StatusBar style="auto" animated hideTransitionAnimation="fade" />
       <PaperProvider theme={paperTheme}>
         <NavigationContainer>
-          <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+          <SafeAreaView style={{ flex: 1 }} onLayout={onLayoutRootView}>
             <RootNavigation isAuth={isAuth} />
-          </View>
+          </SafeAreaView>
         </NavigationContainer>
       </PaperProvider>
     </>
