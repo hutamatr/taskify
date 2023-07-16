@@ -77,7 +77,7 @@ export default function Home() {
       </ScrollView>
       <AnimatedFAB
         icon="plus"
-        variant="tertiary"
+        variant="surface"
         label="Add Task"
         extended={showButton}
         onPress={createNewTaskHandler}

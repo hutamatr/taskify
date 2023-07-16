@@ -55,7 +55,7 @@ export default function Categories() {
       <CategoriesForm bottomSheetRef={bottomSheetRef} />
       <AnimatedFAB
         icon="plus"
-        variant="tertiary"
+        variant="surface"
         label="Add Category"
         extended={showButton}
         onPress={createNewCategoriesHandler.bind(null, 0)}

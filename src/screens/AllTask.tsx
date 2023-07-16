@@ -97,7 +97,7 @@ export default function AllTask() {
       />
       <AnimatedFAB
         icon="plus"
-        variant="tertiary"
+        variant="surface"
         label="Add Task"
         extended={showButton}
         onPress={createNewTaskHandler}
