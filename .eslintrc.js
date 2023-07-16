@@ -53,18 +53,31 @@ module.exports = {
       'warn',
       {
         groups: [
-          // ext library & side effect imports
-          ['^@?\\w', '^\\u0000'],
+          // Side effect imports.
+          ['^\\u0000'],
+
+          // Packages.
+          // Things that start with a letter (or digit or underscore), or `@` followed by a letter.
+          ['^@?\\w'],
+
+          // components
+          ['^@components'],
+
+          // screens
+          ['^@screens', '^@navigation'],
+
+          // store
+          ['^@store', '^@api'],
+
+          // hooks & utils
+          ['^@hooks', '^@utils'],
+
+          // Other imports
+          // ['^@/'],
+
           // {s}css files
           ['^.+\\.s?css$'],
-          // Lib and hooks
-          ['^@/lib', '^@/hooks'],
-          // static data
-          ['^@/data'],
-          // components
-          ['^@/components'],
-          // Other imports
-          ['^@/'],
+
           // relative paths up until 3 level
           [
             '^\\./?$',
@@ -76,7 +89,8 @@ module.exports = {
             '^\\.\\./\\.\\./\\.\\./?$',
             '^\\.\\./\\.\\./\\.\\.(?!/?$)',
           ],
-          ['^@/types'],
+
+          ['^types'],
           ['^'],
         ],
       },
