@@ -11,6 +11,7 @@ import {
 import Loading from '@components/ui/Loading';
 import Text from '@components/ui/Text';
 
+import { useAppTheme } from '@hooks/useAppTheme';
 import { formatList } from '@utils/formatList';
 
 import CategoriesItem from './CategoriesItem';
@@ -33,6 +34,7 @@ export default function CategoriesList({
   error,
 }: ICategoriesListProps) {
   const navigation = useNavigation<CategoriesNavigationProp>();
+  const theme = useAppTheme();
 
   const viewCategoriesDetailHandler = (category: ICategories) => {
     navigation.navigate('CategoriesDetail', { ...category });
@@ -72,6 +74,7 @@ export default function CategoriesList({
                 {...item}
                 mode={undefined}
                 style={styles.categoriesItem}
+                textStyle={{ color: theme.colors.surface }}
                 textVariant="titleMedium"
                 onPress={viewCategoriesDetailHandler.bind(null, item)}
               />

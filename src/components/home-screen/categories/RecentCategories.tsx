@@ -8,9 +8,14 @@ import Text from '@components/ui/Text';
 
 import { useStore } from '@store/useStore';
 
+import { useAppTheme } from '@hooks/useAppTheme';
+
 import type { HomeNavigationProp, ICategories } from 'types/types';
 
 export default function RecentCategories() {
+  const theme = useAppTheme();
+  const navigation = useNavigation<HomeNavigationProp>();
+
   const { categories, categoriesStatus, categoriesError } = useStore(
     (state) => ({
       categories: state.categories,
@@ -19,8 +24,6 @@ export default function RecentCategories() {
     }),
     shallow
   );
-
-  const navigation = useNavigation<HomeNavigationProp>();
 
   const viewCategoriesDetailHandler = (category: ICategories) => {
     navigation.navigate('CategoriesDetail', { ...category });
@@ -59,6 +62,7 @@ export default function RecentCategories() {
                 key={category.id}
                 name={category.name}
                 style={styles.categoriesItem}
+                textStyle={{ color: theme.colors.surface }}
                 textVariant="titleMedium"
                 mode="contained"
                 onPress={viewCategoriesDetailHandler.bind(null, category)}

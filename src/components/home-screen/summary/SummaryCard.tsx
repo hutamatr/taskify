@@ -5,6 +5,8 @@ import { Card } from 'react-native-paper';
 import Loading from '@components/ui/Loading';
 import Text from '@components/ui/Text';
 
+import { useAppTheme } from '@hooks/useAppTheme';
+
 import type { ICategories, ITask } from 'types/types';
 
 interface ISummaryCardProps {
@@ -15,6 +17,8 @@ interface ISummaryCardProps {
 }
 
 export default function SummaryCard({ tasks, categories, isLoading }: ISummaryCardProps) {
+  const theme = useAppTheme();
+
   const totalInProgress = useMemo(() => {
     return tasks?.filter((task) => task.isCompleted === false).length;
   }, [tasks]);
@@ -44,10 +48,14 @@ export default function SummaryCard({ tasks, categories, isLoading }: ISummaryCa
         {!isLoading && (
           <>
             <Card.Content style={styles.cardContent}>
-              <Text variant="displayMedium" fontType="regular">
+              <Text
+                variant="displayMedium"
+                fontType="regular"
+                style={{ color: theme.colors.primary }}
+              >
                 {totalInProgress > 99 ? '99+' : totalInProgress?.toString()}
               </Text>
-              <Text variant="titleMedium" fontType="semibold">
+              <Text variant="titleLarge" fontType="semibold">
                 {totalInProgress > 1 ? 'tasks' : 'task'} in progress
               </Text>
             </Card.Content>
@@ -71,10 +79,14 @@ export default function SummaryCard({ tasks, categories, isLoading }: ISummaryCa
           {isLoading && <Loading size="large" />}
           {!isLoading && (
             <Card.Content style={styles.cardContent}>
-              <Text variant="displayMedium" fontType="regular">
+              <Text
+                variant="displayMedium"
+                fontType="regular"
+                style={{ color: theme.colors.primary }}
+              >
                 {totalDone > 99 ? '99+' : totalDone?.toString()}
               </Text>
-              <Text variant="titleMedium" fontType="semibold">
+              <Text variant="titleLarge" fontType="semibold">
                 {totalDone > 1 ? 'tasks' : 'task'} done
               </Text>
             </Card.Content>
@@ -93,10 +105,14 @@ export default function SummaryCard({ tasks, categories, isLoading }: ISummaryCa
           {isLoading && <Loading size="large" />}
           {!isLoading && (
             <Card.Content style={styles.cardContent}>
-              <Text variant="displayMedium" fontType="regular">
+              <Text
+                variant="displayMedium"
+                fontType="regular"
+                style={{ color: theme.colors.primary }}
+              >
                 {totalCategories}
               </Text>
-              <Text variant="titleMedium" fontType="semibold">
+              <Text variant="titleLarge" fontType="semibold">
                 {totalCategories > 1 ? 'categories' : 'category'}
               </Text>
             </Card.Content>

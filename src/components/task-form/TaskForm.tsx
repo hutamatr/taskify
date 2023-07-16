@@ -11,6 +11,7 @@ import Text from '@components/ui/Text';
 
 import { useStore } from '@store/useStore';
 
+import { useAppTheme } from '@hooks/useAppTheme';
 import useInputState from '@hooks/useInputState';
 import { formatList } from '@utils/formatList';
 
@@ -43,6 +44,7 @@ export default function TaskForm({ categories, isLoading, error, isEdit }: ITask
     inputState: { title: '', description: '', date: new Date(), categoryId: '', categoryName: '' },
   });
 
+  const theme = useAppTheme();
   const navigation = useNavigation<CreateTaskNavigationProp & EditTaskNavigationProp>();
   const route = useRoute<EditTaskScreenRouteProp>();
 
@@ -212,6 +214,10 @@ export default function TaskForm({ categories, isLoading, error, isEdit }: ITask
                   {...item}
                   mode={item.id === input.categoryId ? 'contained' : 'outlined'}
                   style={styles.categoriesItem}
+                  textStyle={{
+                    color:
+                      item.id === input.categoryId ? theme.colors.surface : theme.colors.primary,
+                  }}
                   textVariant="bodyLarge"
                   onPress={pickedCategoriesHandler.bind(null, item)}
                 />
@@ -230,7 +236,7 @@ export default function TaskForm({ categories, isLoading, error, isEdit }: ITask
         onPress={submitTaskHandler}
         loading={tasksStatus === 'pending'}
       >
-        <Text fontType="semibold" variant="titleMedium">
+        <Text fontType="semibold" variant="titleMedium" style={{ color: theme.colors.surface }}>
           {isEdit ? 'Update Task' : '  Add Task'}
         </Text>
       </Button>
