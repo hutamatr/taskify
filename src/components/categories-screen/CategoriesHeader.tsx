@@ -17,7 +17,7 @@ export default function CategoriesHeader() {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    paddingTop: 16,
+    paddingTop: 8,
   },
   textCategoriesContainer: {
     flex: 3,

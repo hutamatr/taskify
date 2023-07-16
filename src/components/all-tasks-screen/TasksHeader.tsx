@@ -17,7 +17,7 @@ export default function TasksHeader() {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    paddingTop: 16,
+    paddingTop: 8,
   },
   textTasksContainer: {
     flex: 3,

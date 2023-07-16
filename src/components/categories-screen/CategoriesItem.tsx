@@ -1,4 +1,4 @@
-import { Pressable, StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import { Pressable, StyleProp, StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { Button } from 'react-native-paper';
 import type { VariantProp } from 'react-native-paper/lib/typescript/src/components/Typography/types';
 
@@ -8,6 +8,7 @@ import type { ICategories } from 'types/types';
 
 interface ICategoriesItemProps extends ICategories {
   style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
   textVariant?: VariantProp<unknown>;
   mode: 'text' | 'outlined' | 'contained' | 'elevated' | 'contained-tonal' | undefined;
   onPress?: () => void;
@@ -19,6 +20,7 @@ export default function CategoriesItem({
   name,
   textVariant,
   style,
+  textStyle,
   onPress,
   mode,
 }: ICategoriesItemProps) {
@@ -33,14 +35,7 @@ export default function CategoriesItem({
         theme={{ roundness: 4 }}
         onPress={onPress}
       >
-        <Text
-          variant={textVariant}
-          lineBreakMode="tail"
-          fontType="regular"
-          style={{
-            color: theme.colors.onPrimary,
-          }}
-        >
+        <Text variant={textVariant} lineBreakMode="tail" fontType="semibold" style={textStyle}>
           {name}
         </Text>
       </Button>
@@ -53,14 +48,7 @@ export default function CategoriesItem({
       android_ripple={{ color: 'white' }}
       onPress={onPress}
     >
-      <Text
-        variant={textVariant}
-        lineBreakMode="tail"
-        fontType="regular"
-        style={{
-          color: theme.colors.onPrimary,
-        }}
-      >
+      <Text variant={textVariant} lineBreakMode="tail" fontType="semibold" style={textStyle}>
         {name}
       </Text>
     </Pressable>

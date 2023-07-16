@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     rowGap: 34,
   },
   formContainer: {
-    rowGap: 24,
+    rowGap: 8,
   },
   buttonContainer: {
     rowGap: 8,
