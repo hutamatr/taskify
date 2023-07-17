@@ -2,7 +2,13 @@
 
 Taskify is a task management mobile application built with React Native. It allows users to create, organize, and track their tasks easily and efficiently. This README provides an overview of the app's features, installation instructions, and usage guidelines.
 
-![Taskify App Screenshot](screenshot.png)
+## Screenshot
+
+![Taskify Home Screenshot](https://github.com/hutamatr/taskify/blob/develop/assets/screenshot/home-screen.png)
+
+![Taskify SignIn Screenshot](https://github.com/hutamatr/taskify/blob/develop/assets/screenshot/signin-screen.png)
+
+![Taskify Profile Screenshot](https://github.com/hutamatr/taskify/blob/develop/assets/screenshot/profile-screen.png)
 
 ## Features
 
@@ -16,6 +22,19 @@ Taskify is a task management mobile application built with React Native. It allo
 - View recent tasks & categories
 - User authentication
 - Update username & user email
+
+## Built With
+
+Taskify is built using the following technologies:
+
+- [React Native](https://reactnative.dev/)
+- [Expo](https://docs.expo.dev/)
+- [React Native Firebase](https://rnfirebase.io/)
+- [React Native Paper](https://reactnativepaper.com/)
+- [React Navigation](https://reactnavigation.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction)
+- Material You theming
 
 ## Installation
 
