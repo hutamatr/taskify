@@ -1,9 +1,11 @@
 {
   "name": "taskify",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "engines": {
-    "node": ">= 16"
+    "node": ">= 16",
+    "yarn": ">=1.22.0",
+    "npm": "please-use-yarn"
   },
   "scripts": {
     "dev-start": "expo start --dev-client --clear",
