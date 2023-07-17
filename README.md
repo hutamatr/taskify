@@ -4,11 +4,11 @@ Taskify is a task management mobile application built with React Native. It allo
 
 ## Screenshot
 
-![Taskify Home Screenshot](https://github.com/hutamatr/taskify/blob/develop/assets/screenshot/home-screen.png)
+![Taskify Home Screenshot](https://github.com/hutamatr/taskify/blob/develop/assets/screenshot/home-screen.jpg)
 
-![Taskify SignIn Screenshot](https://github.com/hutamatr/taskify/blob/develop/assets/screenshot/signin-screen.png)
+![Taskify SignIn Screenshot](https://github.com/hutamatr/taskify/blob/develop/assets/screenshot/signin-screen.jpg)
 
-![Taskify Profile Screenshot](https://github.com/hutamatr/taskify/blob/develop/assets/screenshot/profile-screen.png)
+![Taskify Profile Screenshot](https://github.com/hutamatr/taskify/blob/develop/assets/screenshot/profile-screen.jpg)
 
 ## Features
 
