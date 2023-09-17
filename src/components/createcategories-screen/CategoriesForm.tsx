@@ -80,7 +80,7 @@ export default function CategoriesForm({ bottomSheetRef }: ICategoriesForm) {
           />
           <View style={{ flexDirection: 'row', columnGap: 8, justifyContent: 'flex-end' }}>
             <Button mode="text" onPress={cancelHandler}>
-              <Text fontType="semibold" variant="titleMedium">
+              <Text fontType="semibold" variant="titleMedium" style={{ color: 'red' }}>
                 Cancel
               </Text>
             </Button>
