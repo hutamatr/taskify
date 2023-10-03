@@ -7,6 +7,7 @@ import { shallow } from 'zustand/shallow';
 
 import CategoriesItem from '@components/categories-screen/CategoriesItem';
 import Loading from '@components/ui/Loading';
+import { scheduledLocalNotification } from '@components/ui/Notification';
 import Text from '@components/ui/Text';
 
 import { useStore } from '@store/useStore';
@@ -122,6 +123,8 @@ export default function TaskForm({ categories, isLoading, error, isEdit }: ITask
         userId: authInfo?.uid,
       };
       addTask(newTask);
+
+      await scheduledLocalNotification(input.title, input.description, input.date);
     }
 
     setInput({
