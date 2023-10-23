@@ -16,11 +16,10 @@ export default function RecentCategories() {
   const theme = useAppTheme();
   const navigation = useNavigation<HomeNavigationProp>();
 
-  const { categories, categoriesStatus, categoriesError } = useStore(
+  const { categories, categoriesStatus } = useStore(
     (state) => ({
       categories: state.categories,
       categoriesStatus: state.categoriesStatus,
-      categoriesError: state.categoriesError,
     }),
     shallow
   );
@@ -32,7 +31,7 @@ export default function RecentCategories() {
   return (
     <View style={styles.container}>
       {categoriesStatus === 'pending' && <Loading size="large" />}
-      {categoriesError?.error && (
+      {categoriesStatus === 'rejected' && (
         <Text fontType="medium" style={styles.error} variant="headlineSmall">
           Failed view recent categories!
         </Text>
@@ -44,13 +43,13 @@ export default function RecentCategories() {
           </Text>
         </View>
       )}
-      {categories?.length > 0 && (
+      {categoriesStatus === 'successful' && (
         <View style={styles.recentCategoriesContainer}>
           {categories.slice(0, 2).map((category) => {
             if (!category.name) {
               return (
                 <CategoriesItem
-                  key={category.id}
+                  key={Number(category.id as string) + 1}
                   style={[styles.categoriesItem, { backgroundColor: 'transparent' }]}
                   mode={undefined}
                   name=""

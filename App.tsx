@@ -17,6 +17,8 @@ import { useColorScheme } from 'react-native';
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import Notification from '@components/ui/Notification';
+
 import RootNavigation from '@navigation/RootNavigation';
 
 import { useStore } from '@store/useStore';
@@ -86,6 +88,7 @@ export default function App() {
         <NavigationContainer>
           <SafeAreaView style={{ flex: 1 }} onLayout={onLayoutRootView}>
             <RootNavigation isAuth={isAuth} />
+            <Notification />
           </SafeAreaView>
         </NavigationContainer>
       </PaperProvider>
